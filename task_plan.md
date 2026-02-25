@@ -1,33 +1,25 @@
-# Task Plan: Scaffold OPINION Project
+# Task Plan: Frontend Dashboard
 
 ## Goal
-
-All files, folders, configs, and dependencies in place so `bun run typecheck` passes on backend and pinion-os imports resolve. Frontend already scaffolded by user.
+Full transparency dashboard connecting to backend SSE, displaying real-time agent state.
 
 ## Features / Steps
-
-- [x] Step 1: Install backend deps at root (`bun install`)
-- [x] Step 2: Create all src/ skeleton files with correct types, exports, and pinion-os imports
-- [x] Step 3: Verify — `bun run typecheck` passes, pinion-os imports resolve
+- [x] 1. lib/types.ts — shared types
+- [x] 2. globals.css — custom vars
+- [x] 3. layout.tsx — force dark
+- [x] 4. lib/utils.ts — formatters
+- [x] 5. .env.local — backend URL
+- [x] 6. api/status/route.ts — status proxy
+- [x] 7. api/stream/route.ts — SSE proxy
+- [x] 8. hooks/use-agent-stream.ts — core hook
+- [x] 9. components/wallet.tsx
+- [x] 10. components/survival.tsx
+- [x] 11. components/monologue.tsx
+- [x] 12. components/feed.tsx
+- [x] 13. components/dashboard.tsx — orchestrator
+- [x] 14. app/page.tsx — render Dashboard
+- [x] 15. Typecheck + build verification
 
 ## Current
-
 **Working on**: Complete
 **Status**: done
-
-## Decisions
-
-- bun:sqlite over better-sqlite3: Bun has built-in SQLite, avoids native addon compilation
-- Two Express servers (port 4020 + 3001): createSkillServer doesn't expose its app
-- express as explicit dep: needed for the SSE/API server on port 3001 (skill server bundles its own)
-- Frontend already scaffolded: Next.js 16 + shadcn + Tailwind v4 (user did this)
-- Frontend uses app/ not src/app/: following user's existing structure
-
-# MCP Plugins installed by use in claude code and ready to use when needed
-
-- /plugin marketplace add chu2bard/pinion-os
-- /plugin install pinion-os
-
-## Errors
-
-(none yet)
