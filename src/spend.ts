@@ -1,6 +1,6 @@
 export type SpendTier = "Starving" | "Surviving" | "Breaking Even" | "Thriving";
 
-const DAILY_BURN = 0.24;
+const DAILY_BURN = 0.48;
 
 export interface SpendState {
   totalEarned: number;
@@ -14,6 +14,7 @@ export interface SpendState {
 export class SpendTracker {
   private earned = 0;
   private spent = 0;
+  private unlocked = false;
 
   recordEarning(amount: number): void {
     this.earned += amount;
@@ -21,6 +22,10 @@ export class SpendTracker {
 
   recordSpend(amount: number): void {
     this.spent += amount;
+  }
+
+  markUnlocked(): void {
+    this.unlocked = true;
   }
 
   getState(currentBalance: number): SpendState {
@@ -36,7 +41,7 @@ export class SpendTracker {
   }
 
   shouldUnlock(): boolean {
-    return this.earned >= 100;
+    return !this.unlocked && this.earned >= 100;
   }
 }
 

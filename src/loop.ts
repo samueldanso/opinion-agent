@@ -28,7 +28,7 @@ export function startLoop(
         text: `ETH: $${priceUSD}${parsedChange !== null ? ` (${parsedChange}%)` : ""}`,
       });
 
-      await resolveExpired(pinion);
+      await resolveExpired(pinion, tracker);
 
       const balanceResult = await pinion.skills.balance(pinion.address);
       tracker.recordSpend(0.01);
@@ -53,6 +53,7 @@ export function startLoop(
         const unlimitedResult = await pinion.skills.unlimited();
         const apiKey = unlimitedResult.data.apiKey;
         pinion.setApiKey(apiKey);
+        tracker.markUnlocked();
         emit({ type: "unlimited_purchased", apiKey });
       }
 
