@@ -1,25 +1,68 @@
-# Task Plan: Frontend Dashboard
+# Task Plan: SIGINT v2 Implementation
 
 ## Goal
-Full transparency dashboard connecting to backend SSE, displaying real-time agent state.
+Rewrite the OPINION v1 agent into SIGINT v2 — folder-per-concern backend with full trade execution pipeline, onchain data sources, boot/milestone/unlimited sequences, and a frontend dashboard with wallet connect and live SSE.
+
+## Spec
+Source of truth: `docs/v2.md`
+
+## v1 → v2 Delta Summary
+- Flat `src/*.ts` → folder-per-concern `src/{db,events,config,data,signal,market,economics,resolution,agent,server}/`
+- `predictions` table → `signals` + `trades` tables
+- No trade execution → full `skills.trade()` + `skills.broadcast()` + `skills.tx()` pipeline
+- No onchain data → Coinglass (funding, liquidations, OI) + DeFiLlama (DEX/CEX volume)
+- No boot sequence → `skills.wallet()` + `skills.fund()` with halt on low balance
+- No milestone/unlimited → auto-trigger on ratio 1.0 / earnings $100
+- 6 SSE event types → 11 SSE event types
+- `prediction_sold` → `signal_sold`, `trade_executed`, `trade_verified`
+- Frontend: basic dashboard → wallet connect (wagmi+viem), zustand, framer-motion, sonner
+- Endpoint: `/predict/eth` → `/signal/eth`
 
 ## Features / Steps
-- [x] 1. lib/types.ts — shared types
-- [x] 2. globals.css — custom vars
-- [x] 3. layout.tsx — force dark
-- [x] 4. lib/utils.ts — formatters
-- [x] 5. .env.local — backend URL
-- [x] 6. api/status/route.ts — status proxy
-- [x] 7. api/stream/route.ts — SSE proxy
-- [x] 8. hooks/use-agent-stream.ts — core hook
-- [x] 9. components/wallet.tsx
-- [x] 10. components/survival.tsx
-- [x] 11. components/monologue.tsx
-- [x] 12. components/feed.tsx
-- [x] 13. components/dashboard.tsx — orchestrator
-- [x] 14. app/page.tsx — render Dashboard
-- [x] 15. Typecheck + build verification
+
+### Phase 1: Backend Foundation
+- [x] F1: Config module (`src/config/index.ts`) — validated env vars, constants, derived values
+- [x] F2: Database layer (`src/db/`) — schema with `price_log`, `signals`, `trades` tables + typed query functions
+- [x] F3: Events system (`src/events/`) — SSE client registry + typed emit with all 11 event types
+- [x] F4: Onchain data fetchers (`src/data/`) — price (skills.price), Coinglass (funding, liquidations, OI), DeFiLlama (DEX/CEX volume)
+
+### Phase 2: Backend Agent Core
+- [ ] F5: Signal module (`src/signal/`) — compose prompt from onchain context + 24h history, parse chat response
+- [ ] F6: Market module (`src/market/`) — trade execution (skills.trade → broadcast → tx verify), trade resolution
+- [ ] F7: Economics module (`src/economics/`) — spend tracker (derived from DB), dynamic pricing by tier, reinvestment logic
+- [ ] F8: Resolution module (`src/resolution/`) — resolve pending signals, directional verdict, trade PnL calc
+
+### Phase 3: Backend Integration
+- [ ] F9: Agent loop (`src/agent/`) — boot sequence (wallet + fund), hourly tick, monologue emitter
+- [ ] F10: Servers (`src/server/`) — x402 skill server (port 4020, `/signal/eth`), Express API (port 3001, `/events` + `/status` + `/signals`)
+- [ ] F11: Entry point (`src/index.ts`) — bootstrap config, init DB, start servers + loop
+- [ ] F12: Backend verification — typecheck, manual test, all SSE events flowing
+
+### Phase 4: Frontend Foundation
+- [ ] F13: Frontend packages + providers — install wagmi, viem, zustand, @tanstack/react-query, framer-motion, sonner; set up providers
+- [ ] F14: Frontend types + hooks — update SSEEvent types to match v2 contract, rewrite useAgentStream with zustand store
+- [ ] F15: API routes — update stream proxy + status proxy, add `/api/signals` proxy
+
+### Phase 5: Frontend Dashboard
+- [ ] F16: Survival + Economics components — ratio, runway, tier, signal price, unlimited progress, earned/spent/margin
+- [ ] F17: Monologue + Signal History components — terminal-style log, signal feed with trade outcomes and PnL
+- [ ] F18: Dashboard layout + header — two-column grid, ETH price, connection status, responsive
+- [ ] F19: Wallet connect + Buy Signal flow — wagmi config, connect button, EIP-3009 signing, signal purchase UX
+
+### Phase 6: Ship
+- [ ] F20: Integration files — `SKILL.md`, `openclaw.plugin.json`, `examples/call-signal.ts`, `.env.example`
+- [ ] F21: Final verification — full loop test, SSE → dashboard, typecheck both packages
 
 ## Current
-**Working on**: Complete
-**Status**: done
+**Working on**: Not started
+**Status**: planning
+
+## Decisions
+- Always USDC→ETH trade regardless of signal direction (capital commitment, not directional derivative)
+- wagmi+viem for wallet connect (not Privy — crypto-native audience)
+- SpendTracker derived from DB (survives restarts) instead of in-memory only
+- Folder-per-concern with index.ts as public interface per module
+- Keep Express for API server (createSkillServer doesn't expose its app)
+
+## Errors
+(none yet)
