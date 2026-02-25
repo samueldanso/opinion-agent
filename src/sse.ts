@@ -4,7 +4,7 @@ export type SSEEvent =
   | { type: "price_update"; price: number; timestamp: number }
   | { type: "prediction_sold"; direction: string; confidence: number; revenue: number }
   | { type: "prediction_resolved"; id: number; correct: boolean; accuracy: number }
-  | { type: "balance_update"; usdc: number; runway: number; ratio: number }
+  | { type: "balance_update"; usdc: number; runway: number; ratio: number; earned: number; spent: number }
   | { type: "monologue"; text: string }
   | { type: "unlimited_purchased"; apiKey: string };
 

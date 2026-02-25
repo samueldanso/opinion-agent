@@ -24,7 +24,7 @@ export function Survival({
 }: SurvivalProps) {
   const ratioDisplay = ratio !== null ? ratio.toFixed(2) : "—";
   const runwayDisplay = runway !== null ? `${runway.toFixed(1)}d` : "—";
-  const accuracyPct = (accuracy * 100).toFixed(0);
+  const accuracyPct = accuracy.toFixed(0);
 
   return (
     <Card>
@@ -48,7 +48,7 @@ export function Survival({
           <div className="h-2 rounded-full bg-muted overflow-hidden">
             <div
               className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-              style={{ width: `${accuracy * 100}%` }}
+              style={{ width: `${accuracy}%` }}
             />
           </div>
         </div>

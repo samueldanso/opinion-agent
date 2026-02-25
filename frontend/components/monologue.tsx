@@ -26,7 +26,7 @@ export function Monologue({ lines }: MonologueProps) {
       <CardContent className="flex-1 min-h-0">
         <div
           ref={scrollRef}
-          className="h-64 overflow-y-auto rounded-lg p-3 font-mono text-xs leading-relaxed"
+          className="min-h-64 max-h-[520px] overflow-y-auto rounded-lg p-3 font-mono text-xs leading-relaxed"
           style={{ background: "var(--terminal-bg)", color: "var(--terminal-text)" }}
         >
           {lines.length === 0 ? (

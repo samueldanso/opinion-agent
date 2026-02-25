@@ -23,7 +23,7 @@ async function boot(): Promise<void> {
 
   console.log(`Balance: ${usdc} USDC, ${eth} ETH`);
   emit({ type: "monologue", text: `Balance: ${usdc.toFixed(2)} USDC, ${eth.toFixed(4)} ETH` });
-  emit({ type: "balance_update", usdc, runway: usdc / 0.24, ratio: 0 });
+  emit({ type: "balance_update", usdc, runway: usdc / 0.24, ratio: 0, earned: 0, spent: 0.01 });
 
   startSkillServer(pinion, tracker);
   startApiServer();

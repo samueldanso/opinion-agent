@@ -12,6 +12,8 @@ const initialState: AgentState = {
   usdc: null,
   runway: null,
   ratio: null,
+  earned: 0,
+  spent: 0,
   tier: "Starving",
   accuracy: 0,
   totalPredictions: 0,
@@ -63,6 +65,8 @@ function reducer(state: AgentState, action: Action): AgentState {
             usdc: event.usdc,
             runway: event.runway,
             ratio: event.ratio,
+            earned: event.earned,
+            spent: event.spent,
             tier: deriveTier(event.ratio),
           };
         case "monologue":

@@ -41,6 +41,8 @@ export function startLoop(
         usdc,
         runway: state.runway,
         ratio: state.ratio,
+        earned: state.totalEarned,
+        spent: state.totalSpent,
       });
 
       emit({
