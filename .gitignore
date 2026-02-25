@@ -1,4 +1,25 @@
 node_modules/
 .env
-/resources
+.env.local
+/dist
+
+# SQLite database (persisted on Railway volume, not in git)
+/data/*.db
+/data/*.db-shm
+/data/*.db-wal
+
+# Bun
+bun.lockb
+
+# Frontend build
+/frontend/.next/
+/frontend/node_modules/
+/frontend/.env.local
+
+# OS
+.DS_Store
+
+# Project files
 /docs
+/resources
+CLAUDE.md
