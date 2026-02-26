@@ -1,6 +1,8 @@
 "use client";
 
 import { useAgentStream } from "@/hooks/use-agent-stream";
+import { ConnectButton } from "./connect-button";
+import { BuySignal } from "./buy-signal";
 import { Wallet } from "./wallet";
 import { Survival } from "./survival";
 import { Economics } from "./economics";
@@ -35,6 +37,7 @@ export function Dashboard() {
             />
             {state.connected ? "Live" : "Reconnecting..."}
           </span>
+          <ConnectButton />
         </div>
       </header>
 
@@ -61,6 +64,10 @@ export function Dashboard() {
             earned={state.earned}
             spent={state.spent}
             tradePnl={state.tradePnl}
+          />
+          <BuySignal
+            signalPrice={state.signalPrice}
+            onSignalReceived={state.refetch}
           />
         </div>
 
