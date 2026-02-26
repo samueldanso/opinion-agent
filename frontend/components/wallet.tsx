@@ -10,16 +10,18 @@ const TIER_CONFIG: Record<SpendTier, { color: string; label: string }> = {
   Surviving: { color: "bg-yellow-500/20 text-yellow-400", label: "SURVIVING" },
   "Breaking Even": { color: "bg-blue-500/20 text-blue-400", label: "BREAKING EVEN" },
   Thriving: { color: "bg-emerald-500/20 text-emerald-400", label: "THRIVING" },
+  Flush: { color: "bg-violet-500/20 text-violet-400", label: "FLUSH" },
 };
 
 interface WalletProps {
   usdc: number | null;
   tier: SpendTier;
   price: number | null;
+  signalPrice: number;
   connected: boolean;
 }
 
-export function Wallet({ usdc, tier, price, connected }: WalletProps) {
+export function Wallet({ usdc, tier, price, signalPrice, connected }: WalletProps) {
   const tierInfo = TIER_CONFIG[tier];
 
   return (
@@ -51,7 +53,13 @@ export function Wallet({ usdc, tier, price, connected }: WalletProps) {
               {price !== null ? formatUSD(price) : "—"}
             </p>
           </div>
-          <Badge className={tierInfo.color}>{tierInfo.label}</Badge>
+          <div className="flex items-center gap-2">
+            <div className="text-right">
+              <p className="text-muted-foreground text-[10px] uppercase tracking-wider">Signal</p>
+              <p className="font-mono text-sm font-semibold">{formatUSD(signalPrice)}</p>
+            </div>
+            <Badge className={tierInfo.color}>{tierInfo.label}</Badge>
+          </div>
         </div>
       </CardContent>
     </Card>

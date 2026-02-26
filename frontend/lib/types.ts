@@ -1,40 +1,54 @@
-export type SpendTier = "Starving" | "Surviving" | "Breaking Even" | "Thriving";
+export type SpendTier = "Starving" | "Surviving" | "Breaking Even" | "Thriving" | "Flush";
 
-export interface PredictionRow {
+export interface SignalRow {
   id: number;
-  predictedAt: number;
+  formedAt: number;
   resolveAt: number;
   resolvedAt: number | null;
-  direction: string;
+  direction: "up" | "down";
   confidence: number;
   reasoning: string;
   currentPrice: number;
   resolvedPrice: number | null;
   correct: number | null;
+  priceCharged: number;
+  revenue: number | null;
 }
 
-export interface TrackRecord {
-  accuracy: number;
-  totalPredictions: number;
-  correct: number;
-  last5: Array<{
-    direction: "up" | "down";
-    actual: "up" | "down";
-    correct: boolean;
-    timestamp: number;
-  }>;
+export interface TradeRow {
+  id: number;
+  signalId: number;
+  executedAt: number;
+  resolvedAt: number | null;
+  direction: "up" | "down";
+  amountUSDC: number;
+  txHash: string;
+  resolvedPnl: number | null;
 }
 
 export interface StatusResponse {
-  trackRecord: TrackRecord;
-  predictions: PredictionRow[];
+  accuracy: number;
+  correct: number;
+  total: number;
+  totalEarned: number;
+  tradePnl: number;
+  ratio: number;
+  tier: SpendTier;
+  signalPrice: number;
+  unlimitedProgress: number;
+  clients: number;
 }
 
 export type SSEEvent =
   | { type: "price_update"; price: number; timestamp: number }
-  | { type: "prediction_sold"; direction: string; confidence: number; revenue: number }
-  | { type: "prediction_resolved"; id: number; correct: boolean; accuracy: number }
+  | { type: "signal_sold"; direction: string; confidence: number; revenue: number; price: number }
+  | { type: "trade_executed"; direction: string; amountUSDC: number; txHash: string }
+  | { type: "trade_verified"; txHash: string; status: "success" | "failed" }
+  | { type: "signal_resolved"; id: number; correct: boolean; pnl: number; accuracy: number }
   | { type: "balance_update"; usdc: number; runway: number; ratio: number; earned: number; spent: number }
+  | { type: "price_adjusted"; oldPrice: number; newPrice: number; reason: string }
+  | { type: "reinvestment"; amount: number; into: string }
+  | { type: "milestone"; event: string; txHash: string }
   | { type: "monologue"; text: string }
   | { type: "unlimited_purchased"; apiKey: string };
 
@@ -48,10 +62,13 @@ export interface AgentState {
   spent: number;
   tier: SpendTier;
   accuracy: number;
-  totalPredictions: number;
+  totalSignals: number;
   correctCount: number;
-  last5: TrackRecord["last5"];
-  predictions: PredictionRow[];
+  tradePnl: number;
+  signalPrice: number;
+  unlimitedProgress: number;
+  signals: SignalRow[];
+  trades: TradeRow[];
   monologue: string[];
   unlimitedKey: string | null;
 }

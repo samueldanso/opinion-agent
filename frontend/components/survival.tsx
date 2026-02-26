@@ -8,8 +8,9 @@ interface SurvivalProps {
   runway: number | null;
   tier: SpendTier;
   accuracy: number;
-  totalPredictions: number;
+  totalSignals: number;
   correctCount: number;
+  unlimitedProgress: number;
   unlimitedKey: string | null;
 }
 
@@ -18,8 +19,9 @@ export function Survival({
   runway,
   tier,
   accuracy,
-  totalPredictions,
+  totalSignals,
   correctCount,
+  unlimitedProgress,
   unlimitedKey,
 }: SurvivalProps) {
   const ratioDisplay = ratio !== null ? ratio.toFixed(2) : "—";
@@ -42,7 +44,7 @@ export function Survival({
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">Track Record</span>
             <span className="font-mono">
-              {accuracyPct}% ({correctCount}/{totalPredictions})
+              {accuracyPct}% ({correctCount}/{totalSignals})
             </span>
           </div>
           <div className="h-2 rounded-full bg-muted overflow-hidden">
@@ -57,13 +59,13 @@ export function Survival({
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">$100 Unlimited</span>
             <span className="font-mono">
-              {unlimitedKey ? "UNLOCKED" : "In progress"}
+              {unlimitedKey ? "UNLOCKED" : `${unlimitedProgress.toFixed(0)}%`}
             </span>
           </div>
           <div className="h-2 rounded-full bg-muted overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${unlimitedKey ? "bg-violet-500" : "bg-violet-500/60"}`}
-              style={{ width: unlimitedKey ? "100%" : "0%" }}
+              style={{ width: `${unlimitedProgress}%` }}
             />
           </div>
         </div>

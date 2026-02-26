@@ -4,7 +4,7 @@ import { useEffect, useReducer, useRef, useCallback } from "react";
 import type { AgentState, SSEEvent, StatusResponse } from "@/lib/types";
 import { deriveTier } from "@/lib/utils";
 
-const MAX_MONOLOGUE = 100;
+const MAX_MONOLOGUE = 200;
 
 const initialState: AgentState = {
   connected: false,
@@ -16,10 +16,13 @@ const initialState: AgentState = {
   spent: 0,
   tier: "Starving",
   accuracy: 0,
-  totalPredictions: 0,
+  totalSignals: 0,
   correctCount: 0,
-  last5: [],
-  predictions: [],
+  tradePnl: 0,
+  signalPrice: 0.1,
+  unlimitedProgress: 0,
+  signals: [],
+  trades: [],
   monologue: [],
   unlimitedKey: null,
 };
@@ -27,7 +30,8 @@ const initialState: AgentState = {
 type Action =
   | { type: "CONNECTED" }
   | { type: "DISCONNECTED" }
-  | { type: "HYDRATE"; payload: StatusResponse }
+  | { type: "HYDRATE_STATUS"; payload: StatusResponse }
+  | { type: "HYDRATE_SIGNALS"; payload: { signals: AgentState["signals"]; trades: AgentState["trades"] } }
   | { type: "SSE"; payload: SSEEvent };
 
 function reducer(state: AgentState, action: Action): AgentState {
@@ -36,28 +40,51 @@ function reducer(state: AgentState, action: Action): AgentState {
       return { ...state, connected: true };
     case "DISCONNECTED":
       return { ...state, connected: false };
-    case "HYDRATE": {
-      const { trackRecord, predictions } = action.payload;
+    case "HYDRATE_STATUS": {
+      const s = action.payload;
       return {
         ...state,
-        accuracy: trackRecord.accuracy,
-        totalPredictions: trackRecord.totalPredictions,
-        correctCount: trackRecord.correct,
-        last5: trackRecord.last5,
-        predictions,
+        accuracy: s.accuracy,
+        totalSignals: s.total,
+        correctCount: s.correct,
+        earned: s.totalEarned,
+        tradePnl: s.tradePnl,
+        ratio: s.ratio,
+        tier: s.tier,
+        signalPrice: s.signalPrice,
+        unlimitedProgress: s.unlimitedProgress,
       };
     }
+    case "HYDRATE_SIGNALS":
+      return { ...state, signals: action.payload.signals, trades: action.payload.trades };
     case "SSE": {
       const event = action.payload;
       switch (event.type) {
         case "price_update":
           return { ...state, price: event.price };
-        case "prediction_sold":
+        case "signal_sold":
+          return {
+            ...state,
+            earned: state.earned + event.revenue,
+            signalPrice: event.price,
+          };
+        case "trade_executed":
+          return {
+            ...state,
+            monologue: [
+              ...state.monologue,
+              `Trade: ${event.direction.toUpperCase()} $${event.amountUSDC} → ${event.txHash.slice(0, 10)}...`,
+            ].slice(-MAX_MONOLOGUE),
+          };
+        case "trade_verified":
           return state;
-        case "prediction_resolved":
+        case "signal_resolved":
           return {
             ...state,
             accuracy: event.accuracy,
+            tradePnl: state.tradePnl + event.pnl,
+            correctCount: event.correct ? state.correctCount + 1 : state.correctCount,
+            totalSignals: state.totalSignals + 1,
           };
         case "balance_update":
           return {
@@ -67,7 +94,26 @@ function reducer(state: AgentState, action: Action): AgentState {
             ratio: event.ratio,
             earned: event.earned,
             spent: event.spent,
-            tier: deriveTier(event.ratio),
+            tier: deriveTier(event.ratio, event.earned),
+          };
+        case "price_adjusted":
+          return {
+            ...state,
+            signalPrice: event.newPrice,
+            monologue: [
+              ...state.monologue,
+              `Signal price: $${event.oldPrice.toFixed(2)} → $${event.newPrice.toFixed(2)} (${event.reason})`,
+            ].slice(-MAX_MONOLOGUE),
+          };
+        case "reinvestment":
+          return state;
+        case "milestone":
+          return {
+            ...state,
+            monologue: [
+              ...state.monologue,
+              `MILESTONE: ${event.event} — tx: ${event.txHash.slice(0, 10)}...`,
+            ].slice(-MAX_MONOLOGUE),
           };
         case "monologue":
           return {
@@ -75,7 +121,7 @@ function reducer(state: AgentState, action: Action): AgentState {
             monologue: [...state.monologue, event.text].slice(-MAX_MONOLOGUE),
           };
         case "unlimited_purchased":
-          return { ...state, unlimitedKey: event.apiKey };
+          return { ...state, unlimitedKey: event.apiKey, unlimitedProgress: 100 };
         default:
           return state;
       }
@@ -92,10 +138,17 @@ export function useAgentStream(): AgentState & { refetch: () => void } {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch("/api/status");
-      if (res.ok) {
-        const data: StatusResponse = await res.json();
-        dispatch({ type: "HYDRATE", payload: data });
+      const [statusRes, signalsRes] = await Promise.all([
+        fetch("/api/status"),
+        fetch("/api/signals"),
+      ]);
+      if (statusRes.ok) {
+        const data: StatusResponse = await statusRes.json();
+        dispatch({ type: "HYDRATE_STATUS", payload: data });
+      }
+      if (signalsRes.ok) {
+        const data = await signalsRes.json();
+        dispatch({ type: "HYDRATE_SIGNALS", payload: data });
       }
     } catch {}
   }, []);
@@ -117,7 +170,7 @@ export function useAgentStream(): AgentState & { refetch: () => void } {
           const event: SSEEvent = JSON.parse(e.data);
           dispatch({ type: "SSE", payload: event });
 
-          if (event.type === "prediction_sold" || event.type === "prediction_resolved") {
+          if (event.type === "signal_sold" || event.type === "signal_resolved") {
             fetchStatus();
           }
         } catch {}

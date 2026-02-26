@@ -23,7 +23,8 @@ export function formatUSD(n: number): string {
   });
 }
 
-export function deriveTier(ratio: number): SpendTier {
+export function deriveTier(ratio: number, earned = 0): SpendTier {
+  if (earned >= 50) return "Flush";
   if (ratio < 0.5) return "Starving";
   if (ratio < 1.0) return "Surviving";
   if (ratio < 1.5) return "Breaking Even";

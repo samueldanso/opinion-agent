@@ -14,17 +14,25 @@ export function Dashboard() {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">OPINION</h1>
-          <p className="text-sm text-muted-foreground">The first self-funding AI prediction agent</p>
+          <h1 className="text-2xl font-bold tracking-tight">SIGINT</h1>
+          <p className="text-sm text-muted-foreground">
+            A sovereign AI agent. It makes calls. You pay.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {state.price !== null && (
             <span className="font-mono text-sm">
-              ETH: ${state.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ETH: $
+              {state.price.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </span>
           )}
           <span className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
-            <span className={`size-2 rounded-full ${state.connected ? "bg-emerald-400" : "bg-red-400"}`} />
+            <span
+              className={`size-2 rounded-full ${state.connected ? "bg-emerald-400" : "bg-red-400"}`}
+            />
             {state.connected ? "Live" : "Reconnecting..."}
           </span>
         </div>
@@ -36,6 +44,7 @@ export function Dashboard() {
             usdc={state.usdc}
             tier={state.tier}
             price={state.price}
+            signalPrice={state.signalPrice}
             connected={state.connected}
           />
           <Survival
@@ -43,18 +52,23 @@ export function Dashboard() {
             runway={state.runway}
             tier={state.tier}
             accuracy={state.accuracy}
-            totalPredictions={state.totalPredictions}
+            totalSignals={state.totalSignals}
             correctCount={state.correctCount}
+            unlimitedProgress={state.unlimitedProgress}
             unlimitedKey={state.unlimitedKey}
           />
-          <Economics earned={state.earned} spent={state.spent} />
+          <Economics
+            earned={state.earned}
+            spent={state.spent}
+            tradePnl={state.tradePnl}
+          />
         </div>
 
         <Monologue lines={state.monologue} />
       </div>
 
       <div className="mt-4">
-        <Feed predictions={state.predictions} />
+        <Feed signals={state.signals} trades={state.trades} />
       </div>
     </div>
   );

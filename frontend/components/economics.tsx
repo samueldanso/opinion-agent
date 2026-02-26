@@ -6,12 +6,15 @@ import { formatUSD } from "@/lib/utils";
 interface EconomicsProps {
   earned: number;
   spent: number;
+  tradePnl: number;
 }
 
-export function Economics({ earned, spent }: EconomicsProps) {
+export function Economics({ earned, spent, tradePnl }: EconomicsProps) {
   const margin = earned - spent;
   const marginColor = margin >= 0 ? "text-[var(--color-up)]" : "text-[var(--color-down)]";
   const marginSign = margin >= 0 ? "+" : "";
+  const pnlColor = tradePnl >= 0 ? "text-[var(--color-up)]" : "text-[var(--color-down)]";
+  const pnlSign = tradePnl >= 0 ? "+" : "";
 
   return (
     <Card>
@@ -21,8 +24,9 @@ export function Economics({ earned, spent }: EconomicsProps) {
       <CardContent className="space-y-3">
         <Row label="Earned" value={formatUSD(earned)} className="text-[var(--color-up)]" />
         <Row label="Spent" value={formatUSD(spent)} className="text-[var(--color-down)]" />
-        <div className="border-t border-border pt-3">
+        <div className="border-t border-border pt-3 space-y-3">
           <Row label="Margin" value={`${marginSign}${formatUSD(margin)}`} className={marginColor} />
+          <Row label="Trade PnL" value={`${pnlSign}${formatUSD(tradePnl)}`} className={pnlColor} />
         </div>
       </CardContent>
     </Card>

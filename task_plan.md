@@ -39,14 +39,14 @@ Source of truth: `docs/v2.md`
 - [x] F12: Backend verification — typecheck, manual test, all SSE events flowing
 
 ### Phase 4: Frontend Foundation
-- [ ] F13: Frontend packages + providers — install wagmi, viem, zustand, @tanstack/react-query, framer-motion, sonner; set up providers
-- [ ] F14: Frontend types + hooks — update SSEEvent types to match v2 contract, rewrite useAgentStream with zustand store
-- [ ] F15: API routes — update stream proxy + status proxy, add `/api/signals` proxy
+- [x] F13: Frontend packages + providers — installed zustand, framer-motion, sonner
+- [x] F14: Frontend types + hooks — updated SSEEvent types to v2 (11 events), SignalRow/TradeRow, Flush tier, useAgentStream handles all events
+- [x] F15: API routes — added `/api/signals` proxy
 
 ### Phase 5: Frontend Dashboard
-- [ ] F16: Survival + Economics components — ratio, runway, tier, signal price, unlimited progress, earned/spent/margin
-- [ ] F17: Monologue + Signal History components — terminal-style log, signal feed with trade outcomes and PnL
-- [ ] F18: Dashboard layout + header — two-column grid, ETH price, connection status, responsive
+- [x] F16: Survival + Economics components — ratio, runway, tier, signal price, unlimited progress, earned/spent/margin, tradePnl
+- [x] F17: Monologue + Signal History components — terminal-style log, signal feed with trade outcomes and PnL
+- [x] F18: Dashboard layout + header — two-column grid, ETH price, connection status, SIGINT branding
 - [ ] F19: Wallet connect + Buy Signal flow — wagmi config, connect button, EIP-3009 signing, signal purchase UX
 
 ### Phase 6: Ship
@@ -54,8 +54,8 @@ Source of truth: `docs/v2.md`
 - [ ] F21: Final verification — full loop test, SSE → dashboard, typecheck both packages
 
 ## Current
-**Working on**: Phase 4 (F13-F15)
-**Status**: Phase 3 complete, backend fully wired, typechecks clean
+**Working on**: Phase 5 F19 (wallet connect), then Phase 6
+**Status**: Phase 4+5 (F13-F18) complete, both backend & frontend typecheck clean
 
 ## Decisions
 - Always USDC→ETH trade regardless of signal direction (capital commitment, not directional derivative)
