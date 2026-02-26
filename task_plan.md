@@ -33,10 +33,10 @@ Source of truth: `docs/v2.md`
 - [x] F8: Resolution module (`src/resolution/`) — resolve pending signals, directional verdict, trade PnL calc
 
 ### Phase 3: Backend Integration
-- [ ] F9: Agent loop (`src/agent/`) — boot sequence (wallet + fund), hourly tick, monologue emitter
-- [ ] F10: Servers (`src/server/`) — x402 skill server (port 4020, `/signal/eth`), Express API (port 3001, `/events` + `/status` + `/signals`)
-- [ ] F11: Entry point (`src/index.ts`) — bootstrap config, init DB, start servers + loop
-- [ ] F12: Backend verification — typecheck, manual test, all SSE events flowing
+- [x] F9: Agent loop (`src/agent/`) — boot sequence (wallet + fund), hourly tick, monologue emitter
+- [x] F10: Servers (`src/server/`) — x402 skill server (port 4020, `/signal/eth`), Express API (port 3001, `/events` + `/status` + `/signals`)
+- [x] F11: Entry point (`src/index.ts`) — bootstrap config, init DB, start servers + loop
+- [x] F12: Backend verification — typecheck, manual test, all SSE events flowing
 
 ### Phase 4: Frontend Foundation
 - [ ] F13: Frontend packages + providers — install wagmi, viem, zustand, @tanstack/react-query, framer-motion, sonner; set up providers
@@ -54,8 +54,8 @@ Source of truth: `docs/v2.md`
 - [ ] F21: Final verification — full loop test, SSE → dashboard, typecheck both packages
 
 ## Current
-**Working on**: Phase 3 (F9-F12)
-**Status**: Phase 2 complete, typechecks clean
+**Working on**: Phase 4 (F13-F15)
+**Status**: Phase 3 complete, backend fully wired, typechecks clean
 
 ## Decisions
 - Always USDC→ETH trade regardless of signal direction (capital commitment, not directional derivative)
