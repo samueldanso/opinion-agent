@@ -27,10 +27,10 @@ Source of truth: `docs/v2.md`
 - [x] F4: Onchain data fetchers (`src/data/`) — price (skills.price), Coinglass (funding, liquidations, OI), DeFiLlama (DEX/CEX volume)
 
 ### Phase 2: Backend Agent Core
-- [ ] F5: Signal module (`src/signal/`) — compose prompt from onchain context + 24h history, parse chat response
-- [ ] F6: Market module (`src/market/`) — trade execution (skills.trade → broadcast → tx verify), trade resolution
-- [ ] F7: Economics module (`src/economics/`) — spend tracker (derived from DB), dynamic pricing by tier, reinvestment logic
-- [ ] F8: Resolution module (`src/resolution/`) — resolve pending signals, directional verdict, trade PnL calc
+- [x] F5: Signal module (`src/signal/`) — compose prompt from onchain context + 24h history, parse chat response
+- [x] F6: Market module (`src/market/`) — trade execution (skills.trade → broadcast → tx verify), trade resolution
+- [x] F7: Economics module (`src/economics/`) — spend tracker (derived from DB), dynamic pricing by tier, reinvestment logic
+- [x] F8: Resolution module (`src/resolution/`) — resolve pending signals, directional verdict, trade PnL calc
 
 ### Phase 3: Backend Integration
 - [ ] F9: Agent loop (`src/agent/`) — boot sequence (wallet + fund), hourly tick, monologue emitter
@@ -54,8 +54,8 @@ Source of truth: `docs/v2.md`
 - [ ] F21: Final verification — full loop test, SSE → dashboard, typecheck both packages
 
 ## Current
-**Working on**: Not started
-**Status**: planning
+**Working on**: Phase 3 (F9-F12)
+**Status**: Phase 2 complete, typechecks clean
 
 ## Decisions
 - Always USDC→ETH trade regardless of signal direction (capital commitment, not directional derivative)
@@ -63,6 +63,9 @@ Source of truth: `docs/v2.md`
 - SpendTracker derived from DB (survives restarts) instead of in-memory only
 - Folder-per-concern with index.ts as public interface per module
 - Keep Express for API server (createSkillServer doesn't expose its app)
+- Removed old v1 flat files (db.ts, loop.ts, predict.ts, resolve.ts, server.ts, spend.ts, sse.ts, stats.ts) — replaced by folder modules
+- pinion trade result uses `.swap` not `.tx` for unsigned tx object
+- economics/tracker uses module-level accumulator for spend (simple, no class needed)
 
 ## Errors
 (none yet)
