@@ -2,7 +2,7 @@
 
 # SIGINT — On-chain Signals Intelligence
 
-> The first sovereign AI that reads on-chain signals, trades its own money, sells its signal, and earns its own survival — no human needed.
+> The first sovereign AI that generates on-chain market signals, backs each call with its own trade, sells them, and earns its own survival — no human needed.
 
 ![Hackathon](https://img.shields.io/badge/Hackathon-2026-333333?style=flat-square)
 ![PinionOS](https://img.shields.io/badge/Built%20on-PinionOS-FF6B35?style=flat-square&logoColor=white)
