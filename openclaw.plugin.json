@@ -1,0 +1,34 @@
+{
+  "name": "sigint",
+  "version": "1.0.0",
+  "description": "Sovereign AI agent that forms ETH directional signals backed by its own trades",
+  "author": "SIGINT",
+  "skills": [
+    {
+      "name": "signal-eth",
+      "description": "ETH price direction signal with onchain context and trade proof",
+      "endpoint": "/signal/eth",
+      "method": "GET",
+      "price": "$0.10",
+      "network": "base",
+      "response": {
+        "direction": "up | down",
+        "confidence": "0-100",
+        "currentPrice": "number",
+        "resolveAt": "unix timestamp",
+        "reasoning": "string",
+        "tradeHash": "0x...",
+        "onchainContext": {
+          "fundingRate": "number",
+          "liquidationBias": "string",
+          "dexCexVolumeRatio": "number"
+        },
+        "trackRecord": {
+          "correct": "number",
+          "total": "number",
+          "tradePnl": "number"
+        }
+      }
+    }
+  ]
+}

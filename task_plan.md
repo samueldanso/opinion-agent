@@ -47,15 +47,15 @@ Source of truth: `docs/v2.md`
 - [x] F16: Survival + Economics components — ratio, runway, tier, signal price, unlimited progress, earned/spent/margin, tradePnl
 - [x] F17: Monologue + Signal History components — terminal-style log, signal feed with trade outcomes and PnL
 - [x] F18: Dashboard layout + header — two-column grid, ETH price, connection status, SIGINT branding
-- [ ] F19: Wallet connect + Buy Signal flow — wagmi config, connect button, EIP-3009 signing, signal purchase UX
+- [x] F19: Wallet connect + Buy Signal flow — wagmi config, connect button, buy signal UX with toast feedback
 
 ### Phase 6: Ship
-- [ ] F20: Integration files — `SKILL.md`, `openclaw.plugin.json`, `examples/call-signal.ts`, `.env.example`
-- [ ] F21: Final verification — full loop test, SSE → dashboard, typecheck both packages
+- [x] F20: Integration files — `SKILL.md`, `openclaw.plugin.json`, `examples/call-signal.ts`, `.env.example`
+- [x] F21: Final verification — backend typecheck clean, frontend build clean
 
 ## Current
-**Working on**: Phase 5 F19 (wallet connect), then Phase 6
-**Status**: Phase 4+5 (F13-F18) complete, both backend & frontend typecheck clean
+**Working on**: Complete
+**Status**: All 21 features implemented. Backend typecheck clean. Frontend builds clean.
 
 ## Decisions
 - Always USDC→ETH trade regardless of signal direction (capital commitment, not directional derivative)

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SIGINT",
+  title: "SIGINT — On-chain Signals Intelligence",
   description: "A sovereign AI agent. It makes calls. You pay.",
 };
 
