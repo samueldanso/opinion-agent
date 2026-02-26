@@ -3,6 +3,12 @@ import type { Response } from "express";
 const clients = new Map<string, Response>();
 let clientId = 0;
 
+setInterval(() => {
+  for (const res of clients.values()) {
+    res.write(": keepalive\n\n");
+  }
+}, 25_000);
+
 export function addClient(res: Response): string {
   const id = String(++clientId);
 
@@ -13,7 +19,7 @@ export function addClient(res: Response): string {
     "Access-Control-Allow-Origin": "*",
   });
 
-  res.write(":\n\n");
+  res.write(": connected\n\n");
   clients.set(id, res);
 
   res.on("close", () => {

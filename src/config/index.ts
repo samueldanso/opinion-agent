@@ -10,7 +10,7 @@ export const config = {
   pinion: {
     privateKey: requireEnv("PINION_PRIVATE_KEY"),
     address: requireEnv("ADDRESS"),
-    network: (process.env.PINION_NETWORK ?? "base-sepolia") as
+    network: (process.env.PINION_NETWORK ?? "base") as
       | "base"
       | "base-sepolia",
   },

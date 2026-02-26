@@ -33,7 +33,7 @@ export async function boot(): Promise<void> {
       (balanceResult.data as { error?: string })?.error ??
       `HTTP ${balanceResult.status}`;
     throw new Error(
-      `Balance check failed: ${errMsg}. Fund wallet with USDC on Base Sepolia: ${pinion.address}`,
+      `Balance check failed: ${errMsg}. Fund wallet with USDC on Base mainnet: ${pinion.address}`,
     );
   }
 

@@ -41,6 +41,13 @@ export async function generateSignal(): Promise<GeneratedSignal> {
   emit({ type: "monologue", text: "Reasoning over market data..." });
   const chatResult = await pinion.skills.chat(prompt, []);
 
+  if (chatResult.status !== 200 || !chatResult.data?.response) {
+    const errMsg =
+      (chatResult.data as { error?: string })?.error ??
+      `HTTP ${chatResult.status}`;
+    throw new Error(`Signal reasoning failed: ${errMsg}`);
+  }
+
   const parsed = parseSignalResponse(chatResult.data.response);
 
   emit({
