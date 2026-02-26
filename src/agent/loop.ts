@@ -28,6 +28,15 @@ export async function boot(): Promise<void> {
   const balanceResult = await pinion.skills.balance(pinion.address);
   recordSpend(0.01);
 
+  if (balanceResult.status !== 200 || !balanceResult.data?.balances) {
+    const errMsg =
+      (balanceResult.data as { error?: string })?.error ??
+      `HTTP ${balanceResult.status}`;
+    throw new Error(
+      `Balance check failed: ${errMsg}. Fund wallet with USDC on Base Sepolia: ${pinion.address}`,
+    );
+  }
+
   const usdc = parseFloat(balanceResult.data.balances.USDC);
   const eth = parseFloat(balanceResult.data.balances.ETH);
 
@@ -81,6 +90,14 @@ export function startLoop(): NodeJS.Timer {
       const pinion = getPinion();
       const balanceResult = await pinion.skills.balance(pinion.address);
       recordSpend(0.01);
+
+      if (balanceResult.status !== 200 || !balanceResult.data?.balances) {
+        const errMsg =
+          (balanceResult.data as { error?: string })?.error ??
+          `HTTP ${balanceResult.status}`;
+        say(`Balance check failed: ${errMsg}`);
+        return;
+      }
 
       const usdc = parseFloat(balanceResult.data.balances.USDC);
       const state = getEconomicState(usdc);
