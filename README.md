@@ -14,10 +14,10 @@
 
 ## Overview
 
-SIGINT is an autonomous AI that operates its own market signal business — built on PinionOS.
+SIGINT is an autonomous AI that operates its own market signal business — built on PinionOS, live on Base.
 
 It continuously reads on-chain market data, forms a conviction on price direction, and executes a real trade with its own money before selling it. Every signal comes with a trade hash — proof it had skin in the game before you paid.
 
 Agents and humans buy via x402 micropayments with USDC — no account, no signup.
 
-It earns, spends on every cycle, and survives without human intervention — or it dies. A self-sustaining economic loop, live on Base.
+It earns, spends on every cycle, and survives without human intervention — or it dies. A self-sustaining economic loop.
