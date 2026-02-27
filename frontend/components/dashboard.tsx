@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useAgentStream } from "@/hooks/use-agent-stream";
 import { ConnectButton } from "./connect-button";
 import { BuySignal } from "./buy-signal";
@@ -8,8 +9,16 @@ import { Survival } from "./survival";
 import { Economics } from "./economics";
 import { Monologue } from "./monologue";
 import { Feed } from "./feed";
-import { TrackRecordChart } from "./track-record-chart";
-import { ParticleBg } from "./particle-bg";
+
+const TrackRecordChart = dynamic(
+  () => import("./track-record-chart").then((m) => m.TrackRecordChart),
+  { ssr: false },
+);
+
+const ParticleBg = dynamic(
+  () => import("./particle-bg").then((m) => m.ParticleBg),
+  { ssr: false },
+);
 
 function SigintMark() {
   return (

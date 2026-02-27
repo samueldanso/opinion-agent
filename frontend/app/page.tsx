@@ -1,10 +1,19 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { EntryGate } from "@/components/entry-gate";
-import { BootTerminal } from "@/components/boot-terminal";
-import { Dashboard } from "@/components/dashboard";
+
+const BootTerminal = dynamic(
+  () => import("@/components/boot-terminal").then((m) => m.BootTerminal),
+  { ssr: false },
+);
+
+const Dashboard = dynamic(
+  () => import("@/components/dashboard").then((m) => m.Dashboard),
+  { ssr: false },
+);
 
 type Screen = "gate" | "boot" | "dashboard";
 
