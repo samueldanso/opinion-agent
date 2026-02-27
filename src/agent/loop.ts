@@ -81,7 +81,7 @@ export async function boot(): Promise<void> {
 
   const signalPrice = getCurrentSignalPrice();
   say(`Signal price: $${signalPrice.toFixed(2)} USDC — ${state.tier} tier`);
-  say("Agent online. Starting hourly loop.");
+  say("Agent online. Starting loop (every 6h).");
 }
 
 export function startLoop(): NodeJS.Timer {
@@ -155,7 +155,7 @@ export function startLoop(): NodeJS.Timer {
 
       evaluateReinvestment(state);
 
-      say("Cycle complete. Sleeping 1h.");
+      say("Cycle complete. Sleeping 6h.");
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       say(`Loop error: ${message}`);

@@ -18,9 +18,9 @@ export const config = {
     api: 3001,
   },
   agent: {
-    pollIntervalMs: 3_600_000,
+    pollIntervalMs: 21_600_000,
     signalResolutionMs: 3_600_000,
-    tradeAmountUSDC: "0.5",
+    tradeAmountUSDC: "0.05",
     milestoneAmountUSDC: "0.01",
     minBalanceToOperate: 0.1,
   },

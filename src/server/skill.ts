@@ -1,12 +1,24 @@
 import { createSkillServer, skill } from "pinion-os/server";
 import { config, getAgentAddress, getPinion } from "../config";
 import { getDb, insertSignal, insertTrade, getAccuracy, getLast5Signals, getTotalTradePnl } from "../db";
-import { generateSignal } from "../signal";
+import { generateSignal, type GeneratedSignal } from "../signal";
 import { executeTrade } from "../market";
 import { getEconomicState, recordSpend } from "../economics";
 import { emit } from "../events";
 import { getCurrentSignalPrice } from "../agent";
 import { say } from "../agent";
+
+interface CachedSignalEntry {
+  signal: GeneratedSignal;
+  tradeHash: string | null;
+}
+
+let _signalCache: CachedSignalEntry | null = null;
+
+function isCacheValid(): boolean {
+  if (!_signalCache) return false;
+  return _signalCache.signal.resolveAt > Date.now();
+}
 
 export function startSkillServer(): void {
   const server = createSkillServer({
@@ -24,17 +36,29 @@ export function startSkillServer(): void {
         try {
           const currentPrice = getCurrentSignalPrice();
 
-          const signal = await generateSignal();
-          recordSpend(0.02);
-
+          let signal: GeneratedSignal;
           let tradeHash: string | null = null;
-          try {
-            const tradeResult = await executeTrade(signal.direction);
-            tradeHash = tradeResult.txHash;
-            recordSpend(0.03 + parseFloat(config.agent.tradeAmountUSDC));
-          } catch (tradeError) {
-            const msg = tradeError instanceof Error ? tradeError.message : String(tradeError);
-            say(`Trade failed (signal still delivered): ${msg}`);
+          let isFromCache = false;
+
+          if (isCacheValid() && _signalCache) {
+            signal = _signalCache.signal;
+            tradeHash = _signalCache.tradeHash;
+            isFromCache = true;
+            say(`Signal served from cache (expires ${new Date(signal.resolveAt).toISOString()})`);
+          } else {
+            signal = await generateSignal();
+            recordSpend(0.02);
+
+            try {
+              const tradeResult = await executeTrade(signal.direction);
+              tradeHash = tradeResult.txHash;
+              recordSpend(0.03 + parseFloat(config.agent.tradeAmountUSDC));
+            } catch (tradeError) {
+              const msg = tradeError instanceof Error ? tradeError.message : String(tradeError);
+              say(`Trade failed (signal still delivered): ${msg}`);
+            }
+
+            _signalCache = { signal, tradeHash };
           }
 
           const db = getDb();
@@ -48,7 +72,7 @@ export function startSkillServer(): void {
             resolveAt: signal.resolveAt,
           });
 
-          if (tradeHash) {
+          if (tradeHash && !isFromCache) {
             insertTrade(db, {
               signalId,
               direction: signal.direction,
