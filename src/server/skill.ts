@@ -27,8 +27,15 @@ export function startSkillServer(): void {
           const signal = await generateSignal();
           recordSpend(0.02);
 
-          const tradeResult = await executeTrade(signal.direction);
-          recordSpend(0.03 + parseFloat(config.agent.tradeAmountUSDC));
+          let tradeHash: string | null = null;
+          try {
+            const tradeResult = await executeTrade(signal.direction);
+            tradeHash = tradeResult.txHash;
+            recordSpend(0.03 + parseFloat(config.agent.tradeAmountUSDC));
+          } catch (tradeError) {
+            const msg = tradeError instanceof Error ? tradeError.message : String(tradeError);
+            say(`Trade failed (signal still delivered): ${msg}`);
+          }
 
           const db = getDb();
           const signalId = insertSignal(db, {
@@ -41,12 +48,14 @@ export function startSkillServer(): void {
             resolveAt: signal.resolveAt,
           });
 
-          insertTrade(db, {
-            signalId,
-            direction: signal.direction,
-            amountUSDC: parseFloat(config.agent.tradeAmountUSDC),
-            txHash: tradeResult.txHash,
-          });
+          if (tradeHash) {
+            insertTrade(db, {
+              signalId,
+              direction: signal.direction,
+              amountUSDC: parseFloat(config.agent.tradeAmountUSDC),
+              txHash: tradeHash,
+            });
+          }
 
           const { correct, total } = getAccuracy(db);
           const last5 = getLast5Signals(db).map((s) => ({
@@ -72,7 +81,7 @@ export function startSkillServer(): void {
             currentPrice: signal.currentPrice,
             resolveAt: signal.resolveAt,
             reasoning: signal.reasoning,
-            tradeHash: tradeResult.txHash,
+            tradeHash,
             onchainContext: signal.onchainContext,
             trackRecord: {
               correct,

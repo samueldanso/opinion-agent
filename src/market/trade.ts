@@ -22,6 +22,19 @@ export async function executeTrade(direction: "up" | "down"): Promise<TradeResul
       `HTTP ${tradeResult.status}`;
     throw new Error(`Trade quote failed: ${errMsg}`);
   }
+
+  // Approve 1inch router to spend USDC if needed (first-time swap)
+  if (tradeResult.data.approve) {
+    emit({ type: "monologue", text: "Approving USDC spend for 1inch router..." });
+    const approveResult = await pinion.skills.broadcast(tradeResult.data.approve);
+    if (!approveResult.data?.txHash) {
+      const errMsg =
+        (approveResult.data as { error?: string })?.error ?? "approval failed";
+      throw new Error(`USDC approval failed: ${errMsg}`);
+    }
+    emit({ type: "monologue", text: `Approval tx: ${approveResult.data.txHash}` });
+  }
+
   const tx = tradeResult.data.swap;
 
   emit({ type: "monologue", text: "Broadcasting trade to Base..." });
