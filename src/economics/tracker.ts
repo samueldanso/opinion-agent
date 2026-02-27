@@ -1,5 +1,5 @@
 import { config } from "../config";
-import { getDb, getTotalEarned, getTotalTradePnl } from "../db";
+import { getDb, getTotalEarned, getTotalTradePnl, insertSpend, getTotalSpend } from "../db";
 
 export type SpendTier = "Starving" | "Surviving" | "Breaking Even" | "Thriving" | "Flush";
 
@@ -16,11 +16,14 @@ export interface EconomicState {
 
 const DAILY_BURN = 0.24;
 
-let _spentAccumulator = 0;
 let _unlocked = false;
 
 export function recordSpend(amount: number): void {
-  _spentAccumulator += amount;
+  try {
+    insertSpend(getDb(), amount);
+  } catch {
+    // Non-fatal — DB may not be ready on very first boot call
+  }
 }
 
 export function markUnlocked(): void {
@@ -37,7 +40,7 @@ export function getEconomicState(currentBalance: number): EconomicState {
   const db = getDb();
   const totalEarned = getTotalEarned(db);
   const tradePnl = getTotalTradePnl(db);
-  const totalSpent = _spentAccumulator;
+  const totalSpent = getTotalSpend(db);
   const ratio = totalSpent > 0 ? totalEarned / totalSpent : 0;
   const tier = deriveTier(ratio, totalEarned);
 

@@ -39,4 +39,20 @@ export function initSchema(db: Database): void {
       resolvedPnl REAL
     )
   `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS monologue_log (
+      id        INTEGER PRIMARY KEY AUTOINCREMENT,
+      timestamp INTEGER NOT NULL,
+      text      TEXT    NOT NULL
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS spend_log (
+      id        INTEGER PRIMARY KEY AUTOINCREMENT,
+      timestamp INTEGER NOT NULL,
+      amount    REAL    NOT NULL
+    )
+  `);
 }

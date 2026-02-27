@@ -1,9 +1,9 @@
 import { createSkillServer, skill } from "pinion-os/server";
-import { config, getAgentAddress } from "../config";
+import { config, getAgentAddress, getPinion } from "../config";
 import { getDb, insertSignal, insertTrade, getAccuracy, getLast5Signals, getTotalTradePnl } from "../db";
 import { generateSignal } from "../signal";
 import { executeTrade } from "../market";
-import { recordSpend } from "../economics";
+import { getEconomicState, recordSpend } from "../economics";
 import { emit } from "../events";
 import { getCurrentSignalPrice } from "../agent";
 import { say } from "../agent";
@@ -74,6 +74,18 @@ export function startSkillServer(): void {
           });
 
           say(`Signal sold: ${signal.direction.toUpperCase()} (${signal.confidence}%) for $${currentPrice.toFixed(2)}`);
+
+          // Refresh live balance so dashboard reflects the trade deduction immediately
+          try {
+            const pinion = getPinion();
+            const balanceResult = await pinion.skills.balance(pinion.address);
+            recordSpend(0.01);
+            if (balanceResult.status === 200 && balanceResult.data?.balances) {
+              const usdc = parseFloat(balanceResult.data.balances.USDC);
+              const state = getEconomicState(usdc);
+              emit({ type: "balance_update", usdc, runway: state.runway, ratio: state.ratio, earned: state.totalEarned, spent: state.totalSpent });
+            }
+          } catch { /* non-fatal */ }
 
           res.json({
             direction: signal.direction,

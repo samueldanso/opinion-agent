@@ -89,7 +89,7 @@ export function Dashboard({ onLogoClick }: DashboardProps) {
       </header>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_1.8fr]">
-        <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4">
           <Wallet
             usdc={state.usdc}
             tier={state.tier}
@@ -118,7 +118,7 @@ export function Dashboard({ onLogoClick }: DashboardProps) {
           />
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4">
           <Monologue lines={state.monologue} />
           <TrackRecordChart signals={state.signals} />
           <Feed signals={state.signals} trades={state.trades} />

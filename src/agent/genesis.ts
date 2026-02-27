@@ -13,7 +13,17 @@ interface WalletData {
 }
 
 export function hasWallet(): boolean {
-  return fs.existsSync(WALLET_PATH);
+  if (fs.existsSync(WALLET_PATH)) return true;
+
+  // Railway/production: restore wallet from env var instead of committing it to git
+  const envWallet = process.env.AGENT_WALLET_JSON;
+  if (envWallet) {
+    fs.mkdirSync(path.dirname(WALLET_PATH), { recursive: true });
+    fs.writeFileSync(WALLET_PATH, envWallet, { mode: 0o600 });
+    return true;
+  }
+
+  return false;
 }
 
 export function loadWallet(): WalletData {

@@ -32,12 +32,14 @@ export interface StatusResponse {
   correct: number;
   total: number;
   totalEarned: number;
+  totalSpent: number;
   tradePnl: number;
   ratio: number;
   tier: SpendTier;
   signalPrice: number;
   unlimitedProgress: number;
   clients: number;
+  monologueHistory: string[];
 }
 
 export type SSEEvent =

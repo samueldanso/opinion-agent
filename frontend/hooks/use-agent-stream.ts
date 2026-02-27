@@ -48,11 +48,13 @@ function reducer(state: AgentState, action: Action): AgentState {
         totalSignals: s.total,
         correctCount: s.correct,
         earned: s.totalEarned,
+        spent: s.totalSpent,
         tradePnl: s.tradePnl,
         ratio: s.ratio,
         tier: s.tier,
         signalPrice: s.signalPrice,
         unlimitedProgress: s.unlimitedProgress,
+        monologue: state.monologue.length === 0 ? s.monologueHistory : state.monologue,
       };
     }
     case "HYDRATE_SIGNALS":

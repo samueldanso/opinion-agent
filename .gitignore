@@ -3,10 +3,8 @@ node_modules/
 .env.local
 /dist
 
-# SQLite database (persisted on Railway volume, not in git)
-/data/*.db
-/data/*.db-shm
-/data/*.db-wal
+# Agent data — NEVER commit (private keys + DB)
+/data/
 
 # Bun
 bun.lockb

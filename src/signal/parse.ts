@@ -7,9 +7,16 @@ export interface ParsedSignal {
 export function parseSignalResponse(raw: string): ParsedSignal {
   const cleaned = raw.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
 
-  const parsed = JSON.parse(cleaned);
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(cleaned) as Record<string, unknown>;
+  } catch {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error(`No JSON found in response: ${cleaned.slice(0, 100)}`);
+    parsed = JSON.parse(match[0]) as Record<string, unknown>;
+  }
 
-  const direction = parsed.direction?.toLowerCase();
+  const direction = (parsed.direction as string | undefined)?.toLowerCase();
   if (direction !== "up" && direction !== "down") {
     throw new Error(`Invalid direction: ${parsed.direction}`);
   }

@@ -5,6 +5,7 @@ import { addClient, getClientCount } from "../events";
 import { getEconomicState } from "../economics";
 import { getCurrentSignalPrice } from "../agent";
 import { say } from "../agent";
+import { getMonologueHistory } from "../agent/monologue";
 
 export function startApiServer(): void {
   const app = express();
@@ -35,12 +36,14 @@ export function startApiServer(): void {
       correct,
       total,
       totalEarned,
+      totalSpent: state.totalSpent,
       tradePnl,
       ratio: state.ratio,
       tier: state.tier,
       signalPrice: getCurrentSignalPrice(),
       unlimitedProgress: state.unlimitedProgress,
       clients: getClientCount(),
+      monologueHistory: getMonologueHistory(),
     });
   });
 

@@ -36,3 +36,6 @@ export {
   getAllTrades,
 } from "./trades";
 export type { TradeRow } from "./trades";
+
+export { insertMonologue, getRecentMonologue } from "./monologue";
+export { insertSpend, getTotalSpend } from "./spend";
