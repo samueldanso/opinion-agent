@@ -129,8 +129,9 @@
   --color-up: oklch(0.72 0.19 142);
   --color-down: oklch(0.63 0.21 25);
   --color-pending: oklch(0.75 0.15 85);
-  --terminal-bg: oklch(0.16 0.01 260);
-  --terminal-text: oklch(0.78 0.18 142);
+  --color-accent-orange: #FF6B35;
+  --terminal-bg: #0d0d0d;
+  --terminal-text: oklch(0.75 0.05 60);
 }
 
 @keyframes blink {
@@ -140,4 +141,13 @@
 
 .animate-blink {
   animation: blink 1.2s step-end infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
 }

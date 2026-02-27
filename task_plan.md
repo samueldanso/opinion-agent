@@ -11,11 +11,11 @@ Implement all v3 features from `docs/sigint-v3-spec.md` in 3 phases — backend 
 - [x] 1.5: Update resolution — store + display price delta magnitude
 
 ## Phase 2: Frontend Experience
-- [ ] 2.1: Entry gate screen — pure black, SIGINT logo/mark, orange ENTER button
-- [ ] 2.2: Boot terminal screen — orange monospace text types out line-by-line, skip button
-- [ ] 2.3: Dashboard layout refresh — unified buyer + agent view per spec
-- [ ] 2.4: Signal magnitude display in feed — show delta `UP ✓ +1.2%` format
-- [ ] 2.5: SSE history replay integration — dashboard loads recent events on connect
+- [x] 2.1: Entry gate screen — pure black, SIGINT logo/mark, orange ENTER button
+- [x] 2.2: Boot terminal screen — orange monospace text types out line-by-line, skip button
+- [x] 2.3: Dashboard layout refresh — unified buyer + agent view per spec
+- [x] 2.4: Signal magnitude display in feed — show delta `UP ✓ +1.2%` format
+- [x] 2.5: SSE history replay integration — works out of box with backend replay
 
 ## Phase 3: Frontend Polish
 - [ ] 3.1: GSAP typewriter for monologue feed
@@ -24,8 +24,8 @@ Implement all v3 features from `docs/sigint-v3-spec.md` in 3 phases — backend 
 - [ ] 3.4: Sound design — keyboard sounds, click feedback, ambient hum
 
 ## Current
-**Working on**: Phase 2.1
-**Status**: Phase 1 complete, starting Phase 2
+**Working on**: Phase 3.1
+**Status**: Phase 1 + 2 complete, starting Phase 3
 
 ## Decisions
 - Commit after each phase passes typecheck + diagnostics

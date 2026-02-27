@@ -16,25 +16,27 @@ export function Monologue({ lines }: MonologueProps) {
   }, [lines.length]);
 
   return (
-    <Card className="flex flex-col h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <span>Agent Monologue</span>
-          <span className="animate-blink text-[var(--terminal-text)]">_</span>
+    <Card className="flex flex-col h-full bg-[#0d0d0d] border-white/5">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 font-mono text-sm tracking-wider text-neutral-400">
+          <span>AGENT MONOLOGUE</span>
+          <span className="animate-blink text-[#FF6B35]">_</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 min-h-0">
         <div
           ref={scrollRef}
-          className="min-h-64 max-h-[520px] overflow-y-auto rounded-lg p-3 font-mono text-xs leading-relaxed"
+          className="min-h-64 max-h-[520px] overflow-y-auto rounded p-3 font-mono text-xs leading-relaxed"
           style={{ background: "var(--terminal-bg)", color: "var(--terminal-text)" }}
         >
           {lines.length === 0 ? (
-            <p className="text-muted-foreground italic">Waiting for agent thoughts...</p>
+            <p className="text-neutral-600 italic">Waiting for agent thoughts...</p>
           ) : (
             lines.map((line, i) => (
-              <p key={i} className="py-0.5">
-                <span className="opacity-40 mr-2 select-none">{String(i + 1).padStart(3, "0")}</span>
+              <p key={`${i}-${line.slice(0, 20)}`} className="py-0.5">
+                <span className="opacity-30 mr-2 select-none text-neutral-600">
+                  {String(i + 1).padStart(3, "0")}
+                </span>
                 {line}
               </p>
             ))

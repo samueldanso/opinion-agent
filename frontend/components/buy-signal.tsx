@@ -203,7 +203,7 @@ export function BuySignal({ signalPrice, onSignalReceived }: BuySignalProps) {
             {loading
               ? "Processing..."
               : isWrongChain
-                ? "Switch to Sepolia"
+                ? "Switch to Base"
                 : "Buy Signal"}
           </Button>
         </div>

@@ -44,7 +44,7 @@ export type SSEEvent =
   | { type: "signal_sold"; direction: string; confidence: number; revenue: number; price: number }
   | { type: "trade_executed"; direction: string; amountUSDC: number; txHash: string }
   | { type: "trade_verified"; txHash: string; status: "success" | "failed" }
-  | { type: "signal_resolved"; id: number; correct: boolean; pnl: number; accuracy: number }
+  | { type: "signal_resolved"; id: number; correct: boolean; pnl: number; accuracy: number; priceDelta: number; deltaFormatted: string }
   | { type: "balance_update"; usdc: number; runway: number; ratio: number; earned: number; spent: number }
   | { type: "price_adjusted"; oldPrice: number; newPrice: number; reason: string }
   | { type: "reinvestment"; amount: number; into: string }

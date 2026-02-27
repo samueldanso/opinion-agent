@@ -10,19 +10,29 @@ interface FeedProps {
   trades: TradeRow[];
 }
 
+function calculateDelta(currentPrice: number, resolvedPrice: number): string {
+  const delta = ((resolvedPrice - currentPrice) / currentPrice) * 100;
+  const sign = delta >= 0 ? "+" : "";
+  return `${sign}${delta.toFixed(1)}%`;
+}
+
 export function Feed({ signals, trades }: FeedProps) {
   const sorted = [...signals].sort((a, b) => b.formedAt - a.formedAt);
   const tradeMap = new Map(trades.map((t) => [t.signalId, t]));
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full bg-[#0d0d0d] border-white/5">
       <CardHeader>
-        <CardTitle>Signal Log</CardTitle>
+        <CardTitle className="font-mono text-sm tracking-wider text-neutral-400">
+          SIGNAL LOG
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 min-h-0">
-        <div className="h-80 overflow-y-auto space-y-2">
+        <div className="max-h-80 overflow-y-auto space-y-1.5">
           {sorted.length === 0 ? (
-            <p className="text-muted-foreground text-sm italic">No signals yet...</p>
+            <p className="text-neutral-600 text-sm italic font-mono">
+              No signals yet...
+            </p>
           ) : (
             sorted.map((s) => (
               <SignalItem key={s.id} signal={s} trade={tradeMap.get(s.id)} />
@@ -38,47 +48,62 @@ function SignalItem({ signal: s, trade }: { signal: SignalRow; trade?: TradeRow 
   const isPending = s.correct === null;
   const isCorrect = s.correct === 1;
 
-  const statusIcon = isPending ? "\u23f3" : isCorrect ? "\u2705" : "\u274c";
-  const directionColor =
-    s.direction === "up" ? "text-[var(--color-up)]" : "text-[var(--color-down)]";
-  const arrow = s.direction === "up" ? "\u2191" : "\u2193";
+  const dir = s.direction.toUpperCase();
+  const mark = isPending ? "" : isCorrect ? "✓" : "✗";
+  const delta =
+    !isPending && s.resolvedPrice !== null
+      ? calculateDelta(s.currentPrice, s.resolvedPrice)
+      : null;
 
-  const pnlText =
-    trade?.resolvedPnl != null
-      ? `${trade.resolvedPnl >= 0 ? "+" : ""}${formatUSD(trade.resolvedPnl)}`
-      : trade
-        ? "pending"
-        : "";
+  const dirColor =
+    s.direction === "up" ? "text-[var(--color-up)]" : "text-[var(--color-down)]";
+  const statusColor = isPending
+    ? "text-[var(--color-pending)]"
+    : isCorrect
+      ? "text-[var(--color-up)]"
+      : "text-[var(--color-down)]";
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border/50 px-3 py-2">
-      <span className="text-lg">{statusIcon}</span>
+    <div className="flex items-center gap-3 rounded border border-white/5 bg-white/[0.02] px-3 py-2">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className={`font-mono font-bold ${directionColor}`}>
-            {arrow} {s.direction.toUpperCase()}
+          <span className={`font-mono font-bold text-sm ${dirColor}`}>
+            {dir}
           </span>
-          <Badge variant="outline" className="text-[10px] px-1.5">
+          {mark && (
+            <span className={`font-mono text-sm ${statusColor}`}>{mark}</span>
+          )}
+          {delta && (
+            <span className={`font-mono text-xs ${statusColor}`}>{delta}</span>
+          )}
+          <Badge variant="outline" className="text-[10px] px-1.5 border-white/10">
             {s.confidence}%
           </Badge>
-          {s.resolvedPrice !== null && (
-            <span className="text-xs text-muted-foreground font-mono">
-              ${s.currentPrice.toFixed(0)} → ${s.resolvedPrice.toFixed(0)}
+          {isPending && (
+            <span className="text-[10px] text-[var(--color-pending)] font-mono">
+              pending
             </span>
           )}
         </div>
-        <p className="text-xs text-muted-foreground truncate mt-0.5">{s.reasoning}</p>
+        <p className="text-[11px] text-neutral-500 truncate mt-0.5 font-mono">
+          {s.reasoning}
+        </p>
       </div>
       <div className="text-right shrink-0">
-        <p className="font-mono text-xs">{formatUSD(s.currentPrice)}</p>
-        {pnlText && (
-          <p
-            className={`text-[10px] font-mono ${trade?.resolvedPnl != null && trade.resolvedPnl >= 0 ? "text-[var(--color-up)]" : trade?.resolvedPnl != null ? "text-[var(--color-down)]" : "text-muted-foreground"}`}
+        <p className="font-mono text-xs text-neutral-400">{formatUSD(s.currentPrice)}</p>
+        {trade?.txHash && (
+          <a
+            href={`https://basescan.org/tx/${trade.txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-mono text-neutral-600 hover:text-[#FF6B35] transition-colors"
           >
-            trade {pnlText}
-          </p>
+            {trade.txHash.slice(0, 8)}...
+          </a>
         )}
-        <p className="text-[10px] text-muted-foreground">{formatRelativeTime(s.formedAt)}</p>
+        <p className="text-[10px] text-neutral-600 font-mono">
+          {formatRelativeTime(s.formedAt)}
+        </p>
       </div>
     </div>
   );
