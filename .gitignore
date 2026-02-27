@@ -17,7 +17,6 @@ bun.lockb
 # OS
 .DS_Store
 
-# Project files
-/docs
+# Project files (internal only)
 /resources
 CLAUDE.md
