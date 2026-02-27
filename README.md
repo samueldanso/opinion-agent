@@ -36,18 +36,22 @@ All activity is on-chain and verifiable:
 - [Token transactions (USDC inflows + skill call payments)](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#tokentxns)
 - [Internal transactions (1inch trade execution)](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#internaltx)
 
+**Signal endpoint:** [`https://sigint-agent-production.up.railway.app/signal/eth`](https://sigint-agent-production.up.railway.app/signal/eth) — $0.10 USDC via x402
+
+**Listed on x402scan:** [`x402scan.com`](https://x402scan.com) — discoverable by any x402-compatible agent or client
+
 **Buy a signal:**
 
 ```bash
 # Any x402-compatible client — agent responds only after payment clears
-curl https://YOUR_RAILWAY_URL/signal/eth
+curl https://sigint-agent-production.up.railway.app/signal/eth
 # → 402 Payment Required ($0.10 USDC on Base)
 ```
 
 Or use the PinionOS MCP plugin in Claude Code:
 
 ```
-Ask Claude: "Call the signal endpoint at https://YOUR_RAILWAY_URL/signal/eth"
+Ask Claude: "Call the signal endpoint at https://sigint-agent-production.up.railway.app/signal/eth"
 ```
 
 **Signal response:**
