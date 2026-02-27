@@ -1,8 +1,49 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { playKeystroke } from "@/lib/sounds";
+
+const PARTICLE_COUNT = 50;
+
+function BootParticles() {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+        id: `bp-${i}`,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 2.5 + 0.5,
+        delay: Math.random() * 5,
+        duration: 3 + Math.random() * 4,
+      })),
+    [],
+  );
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full bg-[#DA1C1C]"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+          }}
+          animate={{ opacity: [0, 0.5, 0] }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 interface BootTerminalProps {
   onComplete: () => void;
@@ -93,7 +134,8 @@ export function BootTerminal({ onComplete }: BootTerminalProps) {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black p-6 md:p-12">
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#060606] p-6 md:p-12">
+      <BootParticles />
       <button
         onClick={handleSkip}
         type="button"

@@ -25,7 +25,7 @@ export function Wallet({ usdc, tier, price, signalPrice, connected }: WalletProp
   const tierInfo = TIER_CONFIG[tier];
 
   return (
-    <Card>
+    <Card className="card-glow bg-[#0d0d0d]">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Agent Wallet</span>

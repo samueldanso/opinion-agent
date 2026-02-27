@@ -24,7 +24,7 @@ export function Monologue({ lines }: MonologueProps) {
   }, [renderedCount]);
 
   return (
-    <Card className="flex flex-col h-full bg-[#0d0d0d] border-white/5">
+    <Card className="flex flex-col h-full card-glow bg-[#0d0d0d]">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 font-mono text-sm tracking-wider text-neutral-400">
           <span>AGENT MONOLOGUE</span>

@@ -29,7 +29,7 @@ export function Survival({
   const accuracyPct = accuracy.toFixed(0);
 
   return (
-    <Card>
+    <Card className="card-glow bg-[#0d0d0d]">
       <CardHeader>
         <CardTitle>Survival Metrics</CardTitle>
       </CardHeader>

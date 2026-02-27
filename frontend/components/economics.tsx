@@ -17,7 +17,7 @@ export function Economics({ earned, spent, tradePnl }: EconomicsProps) {
   const pnlSign = tradePnl >= 0 ? "+" : "";
 
   return (
-    <Card>
+    <Card className="card-glow bg-[#0d0d0d]">
       <CardHeader>
         <CardTitle>Economics</CardTitle>
       </CardHeader>

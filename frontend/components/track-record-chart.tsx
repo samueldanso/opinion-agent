@@ -35,7 +35,7 @@ export function TrackRecordChart({ signals }: TrackRecordChartProps) {
 
   if (resolved.length === 0) {
     return (
-      <Card className="bg-[#0d0d0d] border-white/5">
+      <Card className="card-glow bg-[#0d0d0d]">
         <CardHeader className="pb-2">
           <CardTitle className="font-mono text-sm tracking-wider text-neutral-400">
             TRACK RECORD
@@ -51,7 +51,7 @@ export function TrackRecordChart({ signals }: TrackRecordChartProps) {
   }
 
   return (
-    <Card className="bg-[#0d0d0d] border-white/5">
+    <Card className="card-glow bg-[#0d0d0d]">
       <CardHeader className="pb-2">
         <CardTitle className="font-mono text-sm tracking-wider text-neutral-400">
           TRACK RECORD

@@ -181,7 +181,7 @@ export function BuySignal({ signalPrice, onSignalReceived }: BuySignalProps) {
   }
 
   return (
-    <Card>
+    <Card className="card-glow bg-[#0d0d0d]">
       <CardHeader>
         <CardTitle>Buy Signal</CardTitle>
       </CardHeader>

@@ -21,7 +21,7 @@ export function Feed({ signals, trades }: FeedProps) {
   const tradeMap = new Map(trades.map((t) => [t.signalId, t]));
 
   return (
-    <Card className="flex flex-col h-full bg-[#0d0d0d] border-white/5">
+    <Card className="flex flex-col h-full card-glow bg-[#0d0d0d]">
       <CardHeader>
         <CardTitle className="font-mono text-sm tracking-wider text-neutral-400">
           SIGNAL LOG

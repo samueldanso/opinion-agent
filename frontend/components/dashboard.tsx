@@ -74,52 +74,38 @@ export function Dashboard() {
 
       <div className="grid gap-4 lg:grid-cols-[1fr_1.8fr]">
         <div className="flex flex-col gap-4">
-          <div className="card-glow rounded-lg">
-            <Wallet
-              usdc={state.usdc}
-              tier={state.tier}
-              price={state.price}
-              signalPrice={state.signalPrice}
-              connected={state.connected}
-            />
-          </div>
-          <div className="card-glow rounded-lg">
-            <BuySignal
-              signalPrice={state.signalPrice}
-              onSignalReceived={state.refetch}
-            />
-          </div>
-          <div className="card-glow rounded-lg">
-            <Survival
-              ratio={state.ratio}
-              runway={state.runway}
-              tier={state.tier}
-              accuracy={state.accuracy}
-              totalSignals={state.totalSignals}
-              correctCount={state.correctCount}
-              unlimitedProgress={state.unlimitedProgress}
-              unlimitedKey={state.unlimitedKey}
-            />
-          </div>
-          <div className="card-glow rounded-lg">
-            <Economics
-              earned={state.earned}
-              spent={state.spent}
-              tradePnl={state.tradePnl}
-            />
-          </div>
+          <Wallet
+            usdc={state.usdc}
+            tier={state.tier}
+            price={state.price}
+            signalPrice={state.signalPrice}
+            connected={state.connected}
+          />
+          <BuySignal
+            signalPrice={state.signalPrice}
+            onSignalReceived={state.refetch}
+          />
+          <Survival
+            ratio={state.ratio}
+            runway={state.runway}
+            tier={state.tier}
+            accuracy={state.accuracy}
+            totalSignals={state.totalSignals}
+            correctCount={state.correctCount}
+            unlimitedProgress={state.unlimitedProgress}
+            unlimitedKey={state.unlimitedKey}
+          />
+          <Economics
+            earned={state.earned}
+            spent={state.spent}
+            tradePnl={state.tradePnl}
+          />
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="card-glow rounded-lg">
-            <Monologue lines={state.monologue} />
-          </div>
-          <div className="card-glow rounded-lg">
-            <TrackRecordChart signals={state.signals} />
-          </div>
-          <div className="card-glow rounded-lg">
-            <Feed signals={state.signals} trades={state.trades} />
-          </div>
+          <Monologue lines={state.monologue} />
+          <TrackRecordChart signals={state.signals} />
+          <Feed signals={state.signals} trades={state.trades} />
         </div>
       </div>
     </div>
