@@ -32,11 +32,11 @@ function SigintLogo({ className }: { className?: string }) {
 }
 
 function GateParticles() {
-  const particles = Array.from({ length: 40 }, (_, i) => ({
+  const particles = Array.from({ length: 60 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 2 + 0.5,
+    size: Math.random() * 3 + 1,
     delay: Math.random() * 5,
     duration: 3 + Math.random() * 4,
   }));
@@ -53,7 +53,7 @@ function GateParticles() {
             width: p.size,
             height: p.size,
           }}
-          animate={{ opacity: [0, 0.4, 0] }}
+          animate={{ opacity: [0, 0.6, 0] }}
           transition={{
             duration: p.duration,
             delay: p.delay,
@@ -81,19 +81,19 @@ export function EntryGate({ onEnter }: EntryGateProps) {
           animate={{ rotate: 360 }}
           transition={{ duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
         >
-          <SigintLogo className="size-28" />
+          <SigintLogo className="size-32" />
         </motion.div>
 
         <div className="text-center">
-          <h1 className="font-mono text-2xl font-bold tracking-[0.3em] text-[#DA1C1C]">
+          <h1 className="font-mono text-3xl font-bold tracking-[0.3em] text-[#DA1C1C]">
             SIGINT
           </h1>
-          <p className="mt-1 font-mono text-[10px] tracking-[0.2em] text-neutral-600">
+          <p className="mt-2 font-mono text-xs tracking-[0.2em] text-neutral-600">
             ON-CHAIN SIGNALS INTELLIGENCE
           </p>
         </div>
 
-        <p className="max-w-xs text-center font-mono text-[11px] leading-relaxed text-neutral-500">
+        <p className="max-w-sm text-center font-mono text-sm leading-relaxed text-neutral-500">
           A sovereign AI agent that forms ETH price signals,
           backs every call with its own capital, and sells
           conviction via x402 micropayments.
@@ -108,7 +108,7 @@ export function EntryGate({ onEnter }: EntryGateProps) {
           ENTER
         </motion.button>
 
-        <div className="flex items-center gap-4 font-mono text-[9px] text-neutral-700">
+        <div className="flex items-center gap-4 font-mono text-[11px] text-neutral-600">
           <span>LIVE ON BASE</span>
           <span className="text-neutral-800">|</span>
           <span>POWERED BY PINIONOS</span>
