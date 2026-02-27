@@ -54,7 +54,26 @@ export function startApiServer(): void {
     res.json({ signals, trades });
   });
 
-  app.listen(config.ports.api, () => {
-    say(`API/SSE server on port ${config.ports.api}`);
+  // Proxy x402 skill server so both ports are reachable from one Railway domain
+  app.all("/signal/*", async (req, res) => {
+    try {
+      const target = `http://localhost:${config.ports.skill}${req.path}`;
+      const headers: Record<string, string> = { Accept: "application/json" };
+      if (req.headers["x-payment"]) headers["x-payment"] = req.headers["x-payment"] as string;
+
+      const upstream = await fetch(target, { method: req.method, headers });
+
+      upstream.headers.forEach((val, key) => {
+        if (key.toLowerCase() !== "transfer-encoding") res.setHeader(key, val);
+      });
+      res.status(upstream.status).send(await upstream.text());
+    } catch {
+      res.status(502).json({ error: "Skill server unreachable" });
+    }
+  });
+
+  const port = Number(process.env.PORT) || config.ports.api;
+  app.listen(port, () => {
+    say(`API/SSE server on port ${port}`);
   });
 }
