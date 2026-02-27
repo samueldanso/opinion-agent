@@ -11,7 +11,7 @@ export const config = {
   genesis: {
     creatorKey: process.env.PINION_PRIVATE_KEY ?? "",
     seedUsdc: envOrDefault("SEED_USDC", "5"),
-    seedEth: envOrDefault("SEED_ETH", "0.002"),
+    seedEth: envOrDefault("SEED_ETH", "0.001"),
   },
   ports: {
     skill: 4020,
