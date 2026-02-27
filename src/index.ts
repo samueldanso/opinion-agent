@@ -14,8 +14,8 @@ async function main(): Promise<void> {
   } else {
     if (!config.genesis.creatorKey) {
       throw new Error(
-        "No agent wallet found and CREATOR_PRIVATE_KEY not set.\n" +
-        "First run requires CREATOR_PRIVATE_KEY to fund the agent.\n" +
+        "No agent wallet found and PINION_PRIVATE_KEY not set.\n" +
+        "First run requires PINION_PRIVATE_KEY to spawn and fund the agent.\n" +
         "See .env.example for setup.",
       );
     }

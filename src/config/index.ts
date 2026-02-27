@@ -9,7 +9,7 @@ export const config = {
     network: (process.env.PINION_NETWORK ?? "base") as "base" | "base-sepolia",
   },
   genesis: {
-    creatorKey: process.env.CREATOR_PRIVATE_KEY ?? "",
+    creatorKey: process.env.PINION_PRIVATE_KEY ?? "",
     seedUsdc: envOrDefault("SEED_USDC", "5"),
     seedEth: envOrDefault("SEED_ETH", "0.002"),
   },
