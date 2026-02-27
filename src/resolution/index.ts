@@ -2,7 +2,7 @@ import { getDb, getPendingSignals, resolveSignal, getAccuracy, getTradeBySignalI
 import { fetchPrice } from "../data";
 import { emit } from "../events";
 import { recordSpend } from "../economics";
-import { isCorrect, calculateTradePnl } from "./verdict";
+import { isCorrect, calculateTradePnl, calculatePriceDelta } from "./verdict";
 
 export async function resolvePendingSignals(): Promise<void> {
   const db = getDb();
@@ -32,8 +32,16 @@ export async function resolvePendingSignals(): Promise<void> {
       resolveTrade(db, signal.id, pnl);
     }
 
+    const { delta, formatted: deltaFormatted } = calculatePriceDelta(
+      signal.currentPrice,
+      currentPrice,
+    );
+
     const { correct: correctCount, total } = getAccuracy(db);
     const accuracy = total > 0 ? (correctCount / total) * 100 : 0;
+
+    const dir = (signal.direction as string).toUpperCase();
+    const mark = correct ? "✓" : "✗";
 
     emit({
       type: "signal_resolved",
@@ -41,13 +49,15 @@ export async function resolvePendingSignals(): Promise<void> {
       correct,
       pnl: parseFloat(pnl.toFixed(4)),
       accuracy: parseFloat(accuracy.toFixed(1)),
+      priceDelta: parseFloat(delta.toFixed(2)),
+      deltaFormatted,
     });
 
     emit({
       type: "monologue",
-      text: `Signal #${signal.id} resolved: ${correct ? "CORRECT" : "INCORRECT"} | PnL: $${pnl.toFixed(4)} | Accuracy: ${accuracy.toFixed(1)}%`,
+      text: `${dir} ${mark} ${deltaFormatted} | PnL: $${pnl.toFixed(4)} | Accuracy: ${accuracy.toFixed(1)}%`,
     });
   }
 }
 
-export { isCorrect, calculateTradePnl } from "./verdict";
+export { isCorrect, calculateTradePnl, calculatePriceDelta } from "./verdict";

@@ -1,5 +1,5 @@
 import { getPinion } from "../config";
-import { getDb, getRecentPrices, insertPrice } from "../db";
+import { getDb, getRecentPrices, getLast5Signals, insertPrice } from "../db";
 import { fetchOnchainContext } from "../data";
 import { emit } from "../events";
 import { buildSignalPrompt } from "./compose";
@@ -34,9 +34,10 @@ export async function generateSignal(): Promise<GeneratedSignal> {
   });
 
   const history = getRecentPrices(db, 24);
+  const recentSignals = getLast5Signals(db);
 
   emit({ type: "monologue", text: "Composing signal prompt with onchain data..." });
-  const prompt = buildSignalPrompt(context, history);
+  const prompt = buildSignalPrompt(context, history, recentSignals);
 
   emit({ type: "monologue", text: "Reasoning over market data..." });
   const chatResult = await pinion.skills.chat(prompt, []);

@@ -22,6 +22,8 @@ export type SSEEvent =
       correct: boolean;
       pnl: number;
       accuracy: number;
+      priceDelta: number;
+      deltaFormatted: string;
     }
   | {
       type: "balance_update";

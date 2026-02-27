@@ -20,10 +20,29 @@ export function getCurrentSignalPrice(): number {
   return _currentSignalPrice;
 }
 
+function printBanner(): void {
+  const orange = "\x1b[38;5;208m";
+  const dim = "\x1b[2m";
+  const reset = "\x1b[0m";
+
+  console.log(`${orange}
+  ███████╗██╗ ██████╗ ██╗███╗   ██╗████████╗
+  ██╔════╝██║██╔════╝ ██║████╗  ██║╚══██╔══╝
+  ███████╗██║██║  ███╗██║██╔██╗ ██║   ██║
+  ╚════██║██║██║   ██║██║██║╚██╗██║   ██║
+  ███████║██║╚██████╔╝██║██║ ╚████║   ██║
+  ╚══════╝╚═╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝   ╚═╝
+${dim}  On-chain Signals Intelligence${reset}
+`);
+}
+
 export async function boot(): Promise<void> {
+  printBanner();
+
   const pinion = getPinion();
 
-  say(`Booting — wallet: ${pinion.address}`);
+  say("SIGINT v3 initialising...");
+  say(`Sovereign identity: ${pinion.address}`);
 
   const balanceResult = await pinion.skills.balance(pinion.address);
   recordSpend(0.01);
@@ -40,7 +59,7 @@ export async function boot(): Promise<void> {
   const usdc = parseFloat(balanceResult.data.balances.USDC);
   const eth = parseFloat(balanceResult.data.balances.ETH);
 
-  say(`Balance: ${usdc.toFixed(2)} USDC, ${eth.toFixed(4)} ETH`);
+  say(`Balance: ${usdc.toFixed(2)} USDC | ${eth.toFixed(4)} ETH`);
 
   const state = getEconomicState(usdc);
   emit({
@@ -60,7 +79,9 @@ export async function boot(): Promise<void> {
     return;
   }
 
-  say("Boot complete. Starting hourly loop.");
+  const signalPrice = getCurrentSignalPrice();
+  say(`Signal price: $${signalPrice.toFixed(2)} USDC — ${state.tier} tier`);
+  say("Agent online. Starting hourly loop.");
 }
 
 export function startLoop(): NodeJS.Timer {

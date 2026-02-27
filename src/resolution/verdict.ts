@@ -14,3 +14,12 @@ export function calculateTradePnl(
 ): number {
   return amountUSDC * (priceAtResolution / priceAtTrade - 1);
 }
+
+export function calculatePriceDelta(
+  priceAtSignal: number,
+  priceAtResolution: number,
+): { delta: number; formatted: string } {
+  const delta = ((priceAtResolution - priceAtSignal) / priceAtSignal) * 100;
+  const sign = delta >= 0 ? "+" : "";
+  return { delta, formatted: `${sign}${delta.toFixed(1)}%` };
+}

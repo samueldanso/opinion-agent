@@ -256,3 +256,11 @@ No API key. No registration. USDC in, signal out.
 | Frontend shows "Reconnecting..."               | Backend not running — `bun run dev`                                                  |
 | Trade failing                                  | Check ETH balance for gas (~0.001 ETH on Base)                                       |
 | `Cannot find module 'pinion-os'`               | `bun install` in project root                                                        |
+
+---
+
+## Roadmap
+
+- **v3:** Sovereign wallet genesis via `skills.wallet()` — creator spawns agent, funds it, agent operates autonomously from there
+- **v3:** ERC-8004 agent identity registration — makes SIGINT discoverable by other agents in the on-chain agent registry
+- **v4:** SIGINT on X — autonomous signal announcements, resolution posts, survival milestones. Every call it backs, every win and loss, posted publicly. The track record becomes a feed.

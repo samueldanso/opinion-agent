@@ -1,9 +1,45 @@
+import { PERSONA } from "../agent/identity";
 import type { OnchainContext } from "../data";
-import type { PriceRow } from "../db";
+import type { PriceRow, SignalRow } from "../db";
+
+interface TrackRecordEntry {
+  direction: "up" | "down";
+  correct: number | null;
+  currentPrice: number;
+  resolvedPrice: number | null;
+  confidence: number;
+}
+
+function formatTrackRecord(signals: TrackRecordEntry[]): string {
+  if (signals.length === 0) return "(no resolved signals yet)";
+
+  const lines = signals.map((s) => {
+    const dir = s.direction.toUpperCase();
+
+    if (s.correct === null || s.resolvedPrice === null)
+      return `- ${dir} (confidence: ${s.confidence}) — pending`;
+
+    const isCorrect = s.correct === 1;
+    const mark = isCorrect ? "✓" : "✗";
+    const delta = ((s.resolvedPrice - s.currentPrice) / s.currentPrice) * 100;
+    const sign = delta >= 0 ? "+" : "";
+    return `- ${dir} ${mark} ${sign}${delta.toFixed(1)}% (confidence: ${s.confidence})`;
+  });
+
+  const resolved = signals.filter((s) => s.correct !== null);
+  const correctCount = resolved.filter((s) => s.correct === 1).length;
+  const accuracy =
+    resolved.length > 0
+      ? `${((correctCount / resolved.length) * 100).toFixed(0)}% (${correctCount}/${resolved.length} recent)`
+      : "n/a";
+
+  return `${lines.join("\n")}\nAccuracy: ${accuracy}`;
+}
 
 export function buildSignalPrompt(
   context: OnchainContext,
   history: PriceRow[],
+  recentSignals?: SignalRow[],
 ): string {
   const historyBlock = history
     .map(
@@ -12,7 +48,14 @@ export function buildSignalPrompt(
     )
     .join("\n");
 
-  return `You are SIGINT, a sovereign AI agent that forms directional signals on ETH price.
+  const trackRecordBlock = recentSignals
+    ? formatTrackRecord(recentSignals)
+    : "(no history)";
+
+  return `${PERSONA}
+
+## Recent Track Record
+${trackRecordBlock}
 
 ## Current Onchain Data
 
@@ -39,7 +82,7 @@ ${historyBlock || "(no history yet)"}
 
 ## Your Task
 
-Based on the onchain data above, predict ETH price direction over the next 1 hour.
+Based on the onchain data above and your recent track record, predict ETH price direction over the next 1 hour.
 
 Respond with ONLY valid JSON — no markdown, no explanation outside the JSON:
 
