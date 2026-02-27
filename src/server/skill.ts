@@ -1,5 +1,5 @@
 import { createSkillServer, skill } from "pinion-os/server";
-import { config } from "../config";
+import { config, getAgentAddress } from "../config";
 import { getDb, insertSignal, insertTrade, getAccuracy, getLast5Signals, getTotalTradePnl } from "../db";
 import { generateSignal } from "../signal";
 import { executeTrade } from "../market";
@@ -10,7 +10,7 @@ import { say } from "../agent";
 
 export function startSkillServer(): void {
   const server = createSkillServer({
-    payTo: config.pinion.address,
+    payTo: getAgentAddress(),
     network: config.pinion.network,
   });
 

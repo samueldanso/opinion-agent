@@ -1,5 +1,5 @@
 import express from "express";
-import { config } from "../config";
+import { config, getAgentAddress } from "../config";
 import { getDb, getAllSignals, getAllTrades, getAccuracy, getTotalEarned, getTotalTradePnl } from "../db";
 import { addClient, getClientCount } from "../events";
 import { getEconomicState } from "../economics";
@@ -30,6 +30,7 @@ export function startApiServer(): void {
     const state = getEconomicState(0);
 
     res.json({
+      address: getAgentAddress(),
       accuracy,
       correct,
       total,

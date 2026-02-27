@@ -1,4 +1,4 @@
-import { config, getPinion, setPinionApiKey } from "../config";
+import { config, getAgentAddress, getPinion, setPinionApiKey } from "../config";
 import { getDb, insertPrice } from "../db";
 import { fetchPrice } from "../data";
 import { emit } from "../events";
@@ -171,7 +171,7 @@ async function sendMilestone(pinion: ReturnType<typeof getPinion>): Promise<void
     say("Ratio crossed 1.0 — sending milestone proof onchain...");
 
     const sendResult = await pinion.skills.send(
-      config.agent.milestoneAddress,
+      getAgentAddress(),
       config.agent.milestoneAmountUSDC,
       "USDC",
     );

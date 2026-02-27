@@ -1,18 +1,17 @@
 import { PinionClient } from "pinion-os";
 
-function requireEnv(key: string): string {
-  const value = process.env[key];
-  if (!value) throw new Error(`Missing required env var: ${key}`);
-  return value;
+function envOrDefault(key: string, fallback: string): string {
+  return process.env[key] ?? fallback;
 }
 
 export const config = {
   pinion: {
-    privateKey: requireEnv("PINION_PRIVATE_KEY"),
-    address: requireEnv("ADDRESS"),
-    network: (process.env.PINION_NETWORK ?? "base") as
-      | "base"
-      | "base-sepolia",
+    network: (process.env.PINION_NETWORK ?? "base") as "base" | "base-sepolia",
+  },
+  genesis: {
+    creatorKey: process.env.CREATOR_PRIVATE_KEY ?? "",
+    seedUsdc: envOrDefault("SEED_USDC", "5"),
+    seedEth: envOrDefault("SEED_ETH", "0.002"),
   },
   ports: {
     skill: 4020,
@@ -23,7 +22,6 @@ export const config = {
     signalResolutionMs: 3_600_000,
     tradeAmountUSDC: "0.5",
     milestoneAmountUSDC: "0.01",
-    milestoneAddress: requireEnv("ADDRESS"),
     minBalanceToOperate: 0.1,
   },
   pricing: {
@@ -41,14 +39,25 @@ export const config = {
 } as const;
 
 let _pinion: PinionClient | null = null;
+let _agentAddress: string | null = null;
+
+export function initPinion(privateKey: string): void {
+  _pinion = new PinionClient({ privateKey });
+  _agentAddress = _pinion.address;
+}
 
 export function getPinion(): PinionClient {
   if (!_pinion) {
-    _pinion = new PinionClient({
-      privateKey: config.pinion.privateKey,
-    });
+    throw new Error("PinionClient not initialised. Call initPinion() first.");
   }
   return _pinion;
+}
+
+export function getAgentAddress(): string {
+  if (!_agentAddress) {
+    throw new Error("Agent address not set. Run genesis or load wallet first.");
+  }
+  return _agentAddress;
 }
 
 export function setPinionApiKey(key: string): void {

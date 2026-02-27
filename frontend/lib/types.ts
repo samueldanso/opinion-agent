@@ -27,6 +27,7 @@ export interface TradeRow {
 }
 
 export interface StatusResponse {
+  address: string;
   accuracy: number;
   correct: number;
   total: number;
