@@ -12,6 +12,7 @@
 ![PinionOS](https://img.shields.io/badge/Built%20on-PinionOS-DA1C1C?style=flat-square&logoColor=white)
 ![Base](https://img.shields.io/badge/Network-Base-0052FF?style=flat-square&logoColor=white)
 ![x402](https://img.shields.io/badge/Payments-x402-FF69B4?style=flat-square&logoColor=white)
+![npm](https://img.shields.io/badge/npm-sigint--os-CB3837?style=flat-square&logo=npm)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
 </div>
@@ -20,7 +21,7 @@
 
 ## Overview
 
-SIGINT is an autonomous AI agent that operates its own market signal business on Base. It reads on-chain market data every hour (ETH price, funding rates, liquidation levels, DEX/CEX volume), forms a directional conviction, executes a real USDC trade with its own capital before selling the signal, then returns a verifiable response with a `tradeHash`.
+SIGINT is an autonomous AI agent that operates its own market signal business on Base. It reads on-chain market data every hour — ETH price, funding rates, liquidation levels, DEX/CEX volume — forms a directional conviction, executes a real USDC trade with its own capital before selling the signal, then returns a verifiable response with a `tradeHash`.
 
 Buyers — agents or humans — pay $0.05–$0.20 USDC via x402. No account, no API key, no signup. The agent earns to survive, spends on every cycle, and its track record is public and permanent.
 
@@ -34,67 +35,59 @@ Buyers — agents or humans — pay $0.05–$0.20 USDC via x402. No account, no 
 | **Token txns** | [USDC inflows + skill call payments](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#tokentxns) |
 | **Internal txns** | [1inch trade execution](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#internaltx) |
 | **Dashboard** | [sigint-agent.vercel.app](https://sigint-agent.vercel.app) |
-| **Signal endpoint** | [`sigint-agent-production.up.railway.app/signal/eth`](https://sigint-agent-production.up.railway.app/signal/eth) |
-| **x402scan** | [`x402scan.com/server/effc53a3-3235-48d5-a054-81c80b01bad2`](https://www.x402scan.com/server/effc53a3-3235-48d5-a054-81c80b01bad2) |
+| **Signal endpoint** | [`sigint-agent-production.up.railway.app/signal/eth`](https://sigint-agent-production.up.railway.app/signal/eth) — x402, $0.10 USDC |
+| **x402scan** | [Listed on x402scan](https://www.x402scan.com/server/effc53a3-3235-48d5-a054-81c80b01bad2) |
 
 ---
 
-## How It Works
+## Buy a Signal
 
-```
-BOOT (once)
-  └─ Load or generate agent wallet
-  └─ Check USDC + ETH balance via skills.balance()
-  └─ Set initial signal price based on earn/spend tier
-        │
-        ▼
-OBSERVE (every hour)
-  └─ skills.price("ETH")                → live price + 24h change
-  └─ Coinglass API (free)               → funding rates + liquidation levels
-  └─ DeFiLlama API (free)               → DEX/CEX volume ratio
-        │
-        ▼
-RESOLVE (every hour)
-  └─ Find signals where resolveAt ≤ now
-  └─ skills.price("ETH")                → compare direction vs actual move
-  └─ Mark ✓ or ✗, record trade PnL
-        │
-        ▼
-ADAPT (every hour)
-  └─ Recalculate earn/spend ratio
-  └─ Adjust signal price if tier changed
-  └─ Send $0.01 USDC milestone tx if ratio just crossed 1.0
-  └─ Purchase unlimited key if lifetime earnings cross $100
-        │
-        ▼
-ON SIGNAL PURCHASE (on demand, x402 payment required)
-  └─ skills.price() + Coinglass + DeFiLlama  → onchain context
-  └─ skills.chat()                            → direction + confidence + reasoning
-  └─ skills.trade() + skills.broadcast()      → commit $0.50 USDC first
-  └─ skills.tx()                              → verify trade landed on Base
-  └─ Return signal + tradeHash to buyer
-        │
-        ▼
-SURVIVE OR DIE
-  └─ Wallet hits zero → agent halts permanently
-  └─ Track record is public and permanent
+### Option 1 — npm package (simplest)
+
+```bash
+npm install sigint-os pinion-os
 ```
 
----
+```typescript
+import { getEthSignal } from "sigint-os"
 
-## Survival Tiers
+const signal = await getEthSignal({
+  privateKey: process.env.WALLET_KEY  // wallet with USDC on Base
+})
 
-Signal price adjusts automatically every hour based on the agent's earn/spend ratio:
+console.log(signal.direction)   // "up" | "down"
+console.log(signal.confidence)  // 72
+console.log(signal.tradeHash)   // agent's own trade — verified on Basescan
+```
 
-| Tier | Earn/Spend Ratio | Signal Price | Description |
-|---|---|---|---|
-| **Starving** | < 0.5 | $0.05 | Spending 2× what it earns — survival mode |
-| **Surviving** | 0.5–1.0 | $0.10 | Approaching breakeven |
-| **Breaking Even** | 1.0–1.5 | $0.10 | Thesis being proven |
-| **Thriving** | ≥ 1.5 | $0.15 | Consistently profitable |
-| **Flush** | earned ≥ $50 | $0.20 | Abundant capital, near-unlimited tier |
+→ Full SDK docs: [`packages/sigint-os/`](packages/sigint-os/README.md)
 
-At **$100 lifetime earnings**, `skills.unlimited()` is auto-triggered — all future PinionOS skill calls become free.
+### Option 2 — PinionOS SDK directly
+
+```typescript
+import { PinionClient, payX402Service } from "pinion-os"
+
+const pinion = new PinionClient({ privateKey: process.env.PINION_PRIVATE_KEY })
+const signal = await payX402Service(
+  pinion.signer,
+  "https://sigint-agent-production.up.railway.app/signal/eth"
+)
+```
+
+### Option 3 — PinionOS MCP plugin in Claude Code
+
+```
+Ask Claude: "Call the signal endpoint at https://sigint-agent-production.up.railway.app/signal/eth"
+```
+
+The MCP plugin handles the x402 handshake automatically.
+
+### Option 4 — Any x402-compatible client
+
+```bash
+# Returns 402 with payment instructions
+curl https://sigint-agent-production.up.railway.app/signal/eth
+```
 
 ---
 
@@ -106,7 +99,7 @@ At **$100 lifetime earnings**, `skills.unlimited()` is auto-triggered — all fu
   "confidence": 72,
   "currentPrice": 1947.31,
   "resolveAt": 1740621600000,
-  "reasoning": "Funding rate positive at 0.02%, longs crowded. Price sitting at resistance near $2,040 trend line with bearish technicals.",
+  "reasoning": "Funding rate positive at 0.02%, longs crowded. Price at resistance near $2,040 with bearish technicals.",
   "tradeHash": "0xb910...9d5d2",
   "onchainContext": {
     "fundingRate": 0.0201,
@@ -121,85 +114,184 @@ At **$100 lifetime earnings**, `skills.unlimited()` is auto-triggered — all fu
 }
 ```
 
-`tradeHash` is proof the agent executed a real USDC → ETH trade on Base **before** this response was returned. Verifiable on [Basescan](https://basescan.org).
+`tradeHash` — the agent executed a real USDC → ETH swap on Base **before** this response was sent. Verify at [basescan.org](https://basescan.org).
 
 ---
 
-## Buy a Signal
-
-### With PinionOS SDK (agent-to-agent)
-
-```typescript
-import { PinionClient, payX402Service } from "pinion-os"
-
-const pinion = new PinionClient({ privateKey: process.env.PINION_PRIVATE_KEY })
-const signal = await payX402Service(
-  pinion.signer,
-  "https://sigint-agent-production.up.railway.app/signal/eth"
-)
-// $0.10 USDC paid automatically — signal returned
-```
-
-### With PinionOS MCP plugin in Claude Code
+## How It Works
 
 ```
-Ask Claude: "Call the signal endpoint at https://sigint-agent-production.up.railway.app/signal/eth"
+BOOT (once)
+  └─ hasWallet() → load data/wallet.json OR restore from AGENT_PRIVATE_KEY
+  └─ If no wallet: runGenesis() — skills.wallet() → skills.send() → skills.broadcast()
+  └─ skills.balance() → check USDC/ETH, set initial signal price
+        │
+        ▼
+OBSERVE (every hour)
+  └─ skills.price("ETH")            $0.01   live price + 24h change
+  └─ Coinglass funding API          free    8h funding rate + open interest
+  └─ Coinglass liquidations API     free    24h long/short liquidation volumes
+  └─ DeFiLlama volume API           free    DEX/CEX volume ratio
+        │
+        ▼
+RESOLVE (every hour)
+  └─ skills.price("ETH")            $0.01   resolve price
+  └─ direction == "up"  → correct if price rose
+  └─ direction == "down" → correct if price fell
+  └─ Mark ✓ or ✗, record trade PnL
+        │
+        ▼
+ADAPT (every hour)
+  └─ Recalculate earn/spend ratio → adjust signal price if tier changed
+  └─ If ratio ≥ 1.0 (first time): skills.send() + skills.broadcast() milestone tx
+  └─ If earned ≥ $100: skills.unlimited() → free skill calls forever
+        │
+        ▼
+ON SIGNAL PURCHASE (on demand — x402 payment required)
+  └─ skills.price()                 $0.01   fresh price
+  └─ Coinglass + DeFiLlama          free    onchain context
+  └─ skills.chat(signalPrompt)      $0.01   direction + confidence + reasoning
+  └─ skills.trade("USDC","ETH","0.5") $0.01 construct 1inch swap
+  └─ skills.broadcast(tx)           $0.01   execute on Base
+  └─ skills.tx(txHash)              $0.01   verify trade landed
+  └─ Return signal + tradeHash to buyer
+        │
+        ▼
+SURVIVE OR DIE
+  └─ Wallet hits zero → agent halts permanently
+  └─ Track record is public and permanent
 ```
 
-The MCP plugin handles x402 payment automatically.
+---
 
-### With any x402-compatible HTTP client
+## Survival Tiers
 
-```bash
-# Raw curl — returns 402 with payment instructions
-curl https://sigint-agent-production.up.railway.app/signal/eth
+Signal price adjusts automatically every hour based on earn/spend ratio:
 
-# x402-aware client required to complete payment and receive signal
-```
+| Tier | Earn/Spend Ratio | Signal Price | Description |
+|---|---|---|---|
+| **Starving** | < 0.5 | $0.05 | Spending 2× earned — survival mode |
+| **Surviving** | 0.5–1.0 | $0.10 | Approaching breakeven |
+| **Breaking Even** | 1.0–1.5 | $0.10 | Thesis proven |
+| **Thriving** | ≥ 1.5 | $0.15 | Consistently profitable |
+| **Flush** | earned ≥ $50 | $0.20 | Abundant capital |
+
+At **$100 lifetime earnings** → `skills.unlimited()` auto-triggered → all future PinionOS calls are free.
+
+---
+
+## PinionOS SDK Usage
+
+All 9 paid PinionOS skills used. Every call is justified — no gratuitous usage:
+
+| Skill | Cost | File | What It Does |
+|---|---|---|---|
+| `skills.wallet()` | $0.01 | [`src/agent/genesis.ts`](src/agent/genesis.ts) | Generate sovereign identity at first boot |
+| `skills.fund()` | $0.01 | [`src/agent/genesis.ts`](src/agent/genesis.ts) | Boot balance check + funding instructions |
+| `skills.price("ETH")` | $0.01 | [`src/data/price.ts`](src/data/price.ts) | Price at hourly poll, signal formation, resolution |
+| `skills.balance(addr)` | $0.01 | [`src/agent/loop.ts`](src/agent/loop.ts) | Wallet health check after each signal |
+| `skills.chat(prompt)` | $0.01 | [`src/signal/index.ts`](src/signal/index.ts) | Onchain context → directional signal JSON |
+| `skills.trade(src,dst,amt)` | $0.01 | [`src/market/trade.ts`](src/market/trade.ts) | Construct $0.50 USDC → ETH swap via 1inch |
+| `skills.broadcast(tx)` | $0.01 | [`src/market/trade.ts`](src/market/trade.ts) | Execute trade + milestone proof tx on Base |
+| `skills.tx(hash)` | $0.01 | [`src/market/trade.ts`](src/market/trade.ts) | Verify trade landed (not hallucinated) |
+| `skills.send(to,amt,token)` | $0.01 | [`src/agent/loop.ts`](src/agent/loop.ts) | Construct proof-of-survival tx when ratio ≥ 1.0 |
+| `skills.unlimited()` | $100 | [`src/agent/loop.ts`](src/agent/loop.ts) | Auto-purchase unlimited key at $100 earned |
+
+**Server-side:**
+
+| API | File | What It Does |
+|---|---|---|
+| `createSkillServer` + `skill()` | [`src/server/skill.ts`](src/server/skill.ts) | x402 revenue endpoint — earns USDC per signal |
+| `payX402Service` | [`packages/sigint-os/`](packages/sigint-os/src/index.ts) | Buyer integration pattern — any agent calls with one line |
+
+→ Full cost breakdown and lifecycle: [`docs/00-overview.md`](docs/00-overview.md)
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  DASHBOARD  Next.js · Vercel                        │
-│  Monologue · Survival · Economics · Signal Log      │
-│  ◄── SSE stream  ──  GET /status  ──  GET /signals  │
-└──────────────────────┬──────────────────────────────┘
-                       │ HTTP / SSE
-┌──────────────────────▼──────────────────────────────┐
-│  BACKEND  Bun / TypeScript · Railway                │
-│                                                     │
-│  Port 3001 — Express                                │
-│  ├── GET /events          SSE stream                │
-│  ├── GET /status          snapshot                  │
-│  ├── GET /signals         history                   │
-│  ├── GET /.well-known/x402  discovery               │
-│  └── ALL /signal/*        proxy → port 4020         │
-│                                                     │
-│  Port 4020 — createSkillServer (pinion-os/server)   │
-│  └── GET /signal/eth      x402 gate ($0.10 USDC)    │
-│                                                     │
-│  ┌──────────────────────────────────────────────┐   │
-│  │  PinionOS SDK  (paid $0.01/call via x402)    │   │
-│  │  price · balance · chat · trade · broadcast  │   │
-│  │  wallet · send · tx · unlimited              │   │
-│  └──────────────────────────────────────────────┘   │
-│                                                     │
-│  ┌──────────────────────────────────────────────┐   │
-│  │  Free APIs                                   │   │
-│  │  Coinglass · DeFiLlama                       │   │
-│  └──────────────────────────────────────────────┘   │
-│                                                     │
-│  SQLite (bun:sqlite) — ./data/agent.db              │
-│  price_log · signals · trades · spend_log           │
-└──────────────────────┬──────────────────────────────┘
-                       │ x402 · USDC · trades
-┌──────────────────────▼──────────────────────────────┐
-│  Base L2 Mainnet                                    │
-│  USDC payments · 1inch swaps · ETH gas              │
-└─────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│  DASHBOARD  Next.js 15 · Vercel                      │
+│  Monologue · Survival · Economics · Signal Log        │
+│  ◄── SSE stream  ──  /status  ──  /signals           │
+└─────────────────────┬────────────────────────────────┘
+                      │ HTTP / SSE
+┌─────────────────────▼────────────────────────────────┐
+│  BACKEND  Bun / TypeScript · Railway                 │
+│                                                      │
+│  Port 3001 — Express                                 │
+│  ├─ GET /events           SSE stream                 │
+│  ├─ GET /status           snapshot                   │
+│  ├─ GET /signals          history                    │
+│  ├─ GET /.well-known/x402 discovery                  │
+│  └─ ALL /signal/*         proxy → port 4020          │
+│                                                      │
+│  Port 4020 — createSkillServer                       │
+│  └─ GET /signal/eth       x402 gate ($0.10 USDC)     │
+│                                                      │
+│  PinionOS SDK · Coinglass · DeFiLlama                │
+│  SQLite (bun:sqlite) — ./data/agent.db               │
+└─────────────────────┬────────────────────────────────┘
+                      │ x402 · USDC · 1inch swaps
+┌─────────────────────▼────────────────────────────────┐
+│  Base L2 Mainnet                                     │
+└──────────────────────────────────────────────────────┘
+```
+
+Two servers, one process. One Railway domain — the proxy routes `/signal/*` to port 4020 internally.
+
+→ Full architecture with data flow diagrams: [`docs/01-architecture.md`](docs/01-architecture.md)
+
+---
+
+## Project Structure
+
+```
+sigint-agent/
+├── src/
+│   ├── index.ts                  Boot sequence
+│   ├── config/index.ts           Env vars, thresholds, ports
+│   ├── agent/
+│   │   ├── loop.ts               Hourly tick, balance checks, milestone, unlimited
+│   │   ├── genesis.ts            skills.wallet() + skills.send() + skills.broadcast()
+│   │   ├── monologue.ts          Agent reasoning log → DB + SSE
+│   │   └── identity.ts           SIGINT PERSONA for skills.chat()
+│   ├── signal/
+│   │   ├── index.ts              generateSignal() — main orchestrator
+│   │   ├── compose.ts            Prompt assembly with onchain context
+│   │   └── parse.ts              JSON extraction from skills.chat() response
+│   ├── server/
+│   │   ├── skill.ts              createSkillServer — x402 /signal/eth endpoint
+│   │   └── api.ts                Express — SSE, status, signals, x402 proxy
+│   ├── market/
+│   │   └── trade.ts              skills.trade() + skills.broadcast() + skills.tx()
+│   ├── data/
+│   │   ├── index.ts              fetchOnchainContext() — aggregates all sources
+│   │   ├── price.ts              skills.price("ETH")
+│   │   ├── funding.ts            Coinglass funding rates
+│   │   ├── liquidations.ts       Coinglass liquidation levels
+│   │   └── volume.ts             DeFiLlama DEX/CEX volume
+│   ├── resolution/
+│   │   └── index.ts              resolvePendingSignals() — hourly verdict
+│   ├── economics/
+│   │   ├── tracker.ts            Earn/spend ratio, tier derivation, runway
+│   │   └── pricing.ts            Dynamic signal price by tier
+│   ├── events/index.ts           SSE client registry + broadcast
+│   └── db/                       SQLite CRUD (signals, trades, prices, spend, monologue)
+├── frontend/
+│   ├── app/                      Next.js app router + API proxy routes
+│   ├── components/               Dashboard panels (Monologue, Feed, Survival, Economics, Wallet)
+│   ├── hooks/use-agent-stream.ts SSE state management
+│   └── lib/types.ts              TypeScript types
+├── packages/
+│   └── sigint-os/                npm client SDK — any agent can install and call
+├── data/                         SQLite DB + wallet.json (Railway volume, gitignored)
+├── docs/
+│   ├── 00-overview.md            Problem, solution, agent lifecycle, PinionOS coverage
+│   ├── 01-architecture.md        System design, data flows, DB schema, module breakdown
+│   └── 02-setup.md               Local dev, genesis flow, Railway + Vercel deployment
+└── assets/sigint-logo.svg
 ```
 
 ---
@@ -209,7 +301,7 @@ curl https://sigint-agent-production.up.railway.app/signal/eth
 ### Prerequisites
 
 - [Bun](https://bun.sh) ≥ 1.0
-- A funded wallet: **USDC on Base** (skill calls + trades) + **ETH on Base** (gas)
+- A wallet with **USDC + ETH on Base** (USDC for skill calls + trades, ETH for gas)
 
 ### 1. Clone and install
 
@@ -222,22 +314,12 @@ cd frontend && bun install && cd ..
 
 ### 2. Configure
 
-```bash
-cp .env.example .env
-```
-
 **`.env` (backend):**
 
 ```bash
-# Creator wallet — used once on first boot to spawn and fund the agent
+# Creator wallet — funds the agent on first boot
 PINION_PRIVATE_KEY=0x<your-funded-wallet-private-key>
-
-# Network
-PINION_NETWORK=base          # base-sepolia for development
-
-# Genesis funding (optional, defaults shown)
-SEED_USDC=5                  # $5 USDC sent to agent wallet on genesis
-SEED_ETH=0.001               # 0.001 ETH sent to agent wallet for gas
+PINION_NETWORK=base-sepolia    # use base-sepolia during dev
 ```
 
 **`frontend/.env.local`:**
@@ -247,46 +329,16 @@ BACKEND_URL=http://localhost:3001
 NEXT_PUBLIC_AGENT_URL=http://localhost:3001
 ```
 
-> On Railway: set `AGENT_PRIVATE_KEY=0x<agent-key>` to restore an existing wallet without re-running genesis.
-
-### 3. Fund the creator wallet
-
-| Asset | Minimum | Purpose |
-|---|---|---|
-| USDC on Base | $6 | Agent seed ($5) + genesis skill calls ($0.05) |
-| ETH on Base | 0.002 | Gas for genesis funding tx + agent operations |
-
-Bridge USDC: [bridge.base.org](https://bridge.base.org) · Get Base ETH: [faucet.base.org](https://faucet.base.org) (Sepolia)
-
-### 4. Run
+### 3. Run
 
 ```bash
-# Terminal 1 — agent backend
-bun run dev
-
-# Terminal 2 — dashboard
-cd frontend && bun run dev
+bun run dev                    # backend (both servers)
+cd frontend && bun run dev     # dashboard
 ```
 
-| Port | Service |
-|---|---|
-| `4020` | x402 skill server — `GET /signal/eth` |
-| `3001` | API + SSE server |
-| `3000` | Next.js dashboard |
+First boot runs genesis: generates the agent wallet, funds it with USDC + ETH, saves it to `data/wallet.json`. Subsequent boots skip genesis and load the existing wallet.
 
-**First boot output:**
-
-```
-[SIGINT] GENESIS — No agent wallet found. Spawning sovereign identity...
-[SIGINT] Agent wallet created: 0x...
-[SIGINT] Funded agent with $5.00 USDC + 0.001 ETH
-[SIGINT] Wallet saved to data/wallet.json
-[SIGINT] Balance: 4.97 USDC | 0.001 ETH
-[SIGINT] Tier: Starving | Signal price: $0.05
-[SIGINT] x402 skill server on port 4020
-[SIGINT] API/SSE server on port 3001
-[SIGINT] Agent online. Starting hourly loop.
-```
+→ Full setup guide, Railway deployment, wallet management: [`docs/02-setup.md`](docs/02-setup.md)
 
 ---
 
@@ -294,22 +346,19 @@ cd frontend && bun run dev
 
 ### `GET /status`
 
-Current agent snapshot.
-
 ```typescript
 {
-  address: string          // agent wallet address
-  accuracy: number         // % correct (resolved signals only)
-  correct: number          // count of correct signals
-  total: number            // count of resolved signals
-  totalEarned: number      // lifetime USDC revenue
-  totalSpent: number       // lifetime USDC spent on skill calls
-  tradePnl: number         // cumulative PnL from agent's own trades
-  ratio: number            // totalEarned / totalSpent
-  tier: string             // "Starving" | "Surviving" | "Breaking Even" | "Thriving" | "Flush"
-  signalPrice: number      // current price in USDC
-  unlimitedProgress: number // 0–100, % toward $100 unlimited key
-  clients: number          // connected SSE clients
+  address: string,           // agent wallet address
+  accuracy: number,          // % correct signals
+  correct: number,           // count of correct
+  total: number,             // count of resolved
+  totalEarned: number,       // lifetime USDC revenue
+  totalSpent: number,        // lifetime USDC spend (skill calls)
+  tradePnl: number,          // agent's cumulative trade PnL
+  ratio: number,             // earned / spent
+  tier: string,              // "Starving" | "Surviving" | "Breaking Even" | "Thriving" | "Flush"
+  signalPrice: number,       // current price in USDC
+  unlimitedProgress: number, // 0–100, % toward $100 unlimited key
   monologueHistory: string[] // last 100 agent log lines
 }
 ```
@@ -318,16 +367,16 @@ Current agent snapshot.
 
 ```typescript
 {
-  signals: SignalRow[]   // last 100 signals, newest first
-  trades: TradeRow[]     // last 100 trades, newest first
+  signals: SignalRow[],   // last 100 signals, newest first
+  trades: TradeRow[]      // last 100 trades, newest first
 }
 ```
 
 ### `GET /events` — SSE
 
-Streams all agent activity in real time. Connect with `EventSource`.
+Real-time agent event stream. Connect with `EventSource("/api/stream")` from the frontend (proxied through Next.js).
 
-| Event type | Payload |
+| Event | Payload |
 |---|---|
 | `price_update` | `{ price, timestamp }` |
 | `signal_sold` | `{ direction, confidence, revenue, price }` |
@@ -340,13 +389,9 @@ Streams all agent activity in real time. Connect with `EventSource`.
 | `monologue` | `{ text }` |
 | `unlimited_purchased` | `{ apiKey }` |
 
-### `GET /signal/eth` — x402 (port 4020, proxied via 3001)
-
-Requires x402 USDC payment. Returns signal JSON (see [Signal Response](#signal-response) above).
-
 ### `GET /.well-known/x402`
 
-x402 discovery document. Used by x402scan and x402-compatible clients for automatic resource discovery.
+x402 discovery document. Used by [x402scan](https://x402scan.com) and any x402-compatible client for automatic resource discovery. Includes ownership proof (origin URL signed with agent's private key).
 
 ---
 
@@ -358,45 +403,15 @@ x402 discovery document. Used by x402scan and x402-compatible clients for automa
 | Agent framework | PinionOS SDK (`pinion-os`) |
 | Skill server | `createSkillServer` + `skill()` from `pinion-os/server` |
 | Payments | x402 on Base — USDC, machine-to-machine native |
-| Onchain data | PinionOS Birdeye (price), Coinglass (funding + liquidations), DeFiLlama (volume) |
+| On-chain data | PinionOS Birdeye (price), Coinglass (funding + liquidations), DeFiLlama (volume) |
 | Trade routing | 1inch via `skills.trade()` + `skills.broadcast()` |
 | LLM reasoning | Claude via `skills.chat()` — no direct API key needed |
 | Storage | SQLite via `bun:sqlite` |
 | Frontend | Next.js 15 + shadcn/ui + Tailwind CSS v4 |
 | Real-time | Server-Sent Events (SSE) |
 | Blockchain | Base L2 (wagmi + viem) |
+| Client SDK | `packages/sigint-os/` — npm-publishable integration package |
 | Deploy | Railway (backend + SQLite volume) · Vercel (frontend) |
-
----
-
-## Project Structure
-
-```
-sigint-agent/
-├── src/
-│   ├── index.ts              Entry point — boot sequence
-│   ├── config/               Env vars, thresholds, port config
-│   ├── agent/                Boot, hourly loop, genesis, monologue, identity
-│   ├── signal/               Signal generation, prompt building, response parsing
-│   ├── server/
-│   │   ├── skill.ts          x402 skill server (port 4020)
-│   │   └── api.ts            API + SSE server (port 3001)
-│   ├── resolution/           Signal resolution logic, PnL calculation
-│   ├── market/               Trade execution via 1inch
-│   ├── data/                 Onchain context (price, funding, liquidations, volume)
-│   ├── economics/            Spend tracking, tier derivation, dynamic pricing
-│   ├── events/               SSE client registry, broadcast
-│   └── db/                   SQLite schema, CRUD for all tables
-├── frontend/
-│   ├── app/                  Next.js app router
-│   ├── components/           Dashboard panels
-│   ├── hooks/                useAgentStream — SSE state management
-│   └── lib/                  Types, utils, wagmi config
-├── data/                     SQLite DB + wallet.json (gitignored, Railway volume)
-├── docs/                     Detailed documentation
-├── assets/                   Logo SVG
-└── railway.toml              Railway deployment config
-```
 
 ---
 
@@ -404,27 +419,17 @@ sigint-agent/
 
 ### Backend → Railway
 
-1. Push repo to GitHub → create Railway project → deploy from GitHub
-2. Set environment variables:
-
-   | Variable | Value |
-   |---|---|
-   | `AGENT_PRIVATE_KEY` | `0x<agent-wallet-private-key>` |
-   | `PINION_PRIVATE_KEY` | same as above |
-   | `PINION_NETWORK` | `base` |
-
-3. Add a Volume: mount path `/app/data` (persists SQLite + wallet.json across deploys)
-4. Railway auto-detects start command from `railway.toml`
+1. Push to GitHub → Railway → New Project → Deploy from GitHub
+2. Set env vars: `AGENT_PRIVATE_KEY`, `PINION_PRIVATE_KEY`, `PINION_NETWORK=base`
+3. Add Volume: mount path `/app/data` (persists wallet + DB across deploys)
+4. Generate domain (port 8080 or 3001)
 
 ### Frontend → Vercel
 
-1. Import `frontend/` directory to Vercel
-2. Set environment variables:
+1. Import `frontend/` to Vercel
+2. Set `BACKEND_URL` and `NEXT_PUBLIC_AGENT_URL` to Railway URL
 
-   | Variable | Value |
-   |---|---|
-   | `BACKEND_URL` | Railway URL |
-   | `NEXT_PUBLIC_AGENT_URL` | Railway URL |
+→ Step-by-step: [`docs/02-setup.md`](docs/02-setup.md)
 
 ---
 
@@ -432,13 +437,13 @@ sigint-agent/
 
 | Error | Fix |
 |---|---|
-| `No agent wallet found and PINION_PRIVATE_KEY not set` | Set `PINION_PRIVATE_KEY` in `.env` |
-| `Insufficient balance` on boot | Fund wallet with USDC + ETH on Base |
-| `402 Payment Required` on `/signal/eth` | Use `payX402Service`, MCP plugin, or dashboard — raw curl won't pay |
-| Frontend shows "Reconnecting..." | Backend not running — `bun run dev` |
-| Trade failing | Check ETH balance for gas (~0.001 ETH on Base) |
-| Wallet lost on Railway redeploy | Add Railway volume mounted at `/app/data` |
-| `Cannot find module 'pinion-os'` | `bun install` in project root |
+| `No agent wallet found and PINION_PRIVATE_KEY not set` | Set `PINION_PRIVATE_KEY=0x...` in `.env` |
+| `Insufficient balance` | Fund wallet with USDC + ETH on Base |
+| `402 Payment Required` (raw curl) | Use `payX402Service`, MCP plugin, or dashboard |
+| Frontend "Reconnecting..." | Backend not running — `bun run dev` |
+| Trade failing | Check ETH balance (~0.001 ETH for gas) |
+| Wallet wiped on Railway redeploy | Add volume at `/app/data` |
+| Genesis runs again on Railway | Set `AGENT_PRIVATE_KEY` in Railway env vars |
 
 ---
 
@@ -446,16 +451,17 @@ sigint-agent/
 
 | Doc | Description |
 |---|---|
-| [Overview](docs/00-overview.md) | Problem, solution, agent lifecycle, survival model |
-| [Architecture](docs/01-architecture.md) | System design, data flows, module breakdown |
-| [Setup Guide](docs/02-setup.md) | Local dev, genesis flow, Railway + Vercel deployment |
+| [`docs/00-overview.md`](docs/00-overview.md) | Problem, solution, agent lifecycle, PinionOS SDK coverage, cost breakdown |
+| [`docs/01-architecture.md`](docs/01-architecture.md) | System design, data flow diagrams, DB schema, module reference |
+| [`docs/02-setup.md`](docs/02-setup.md) | Local dev, genesis flow, Railway + Vercel deployment, wallet management |
+| [`packages/sigint-os/`](packages/sigint-os/README.md) | npm client SDK — buy signals from any agent or app |
 
 ---
 
 ## Contributing
 
 1. Fork this repository
-2. Create your feature branch (`git checkout -b feat/my-feature`)
+2. Create your feature branch
 3. Commit your changes
 4. Open a Pull Request
 
