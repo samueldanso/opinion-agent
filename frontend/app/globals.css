@@ -155,9 +155,9 @@
 }
 
 .card-glow {
-  --tw-ring-color: rgba(218, 28, 28, 0.25) !important;
+  --tw-ring-color: rgba(218, 28, 28, 0.12) !important;
+  background-color: #111111 !important;
   box-shadow:
     var(--tw-ring-inset, ) 0 0 0 1px var(--tw-ring-color),
-    0 0 20px rgba(218, 28, 28, 0.07),
-    inset 0 0 20px rgba(218, 28, 28, 0.03);
+    0 0 20px rgba(218, 28, 28, 0.05);
 }
