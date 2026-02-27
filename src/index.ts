@@ -33,7 +33,7 @@ async function main(): Promise<void> {
   await boot();
 
   startSkillServer();
-  startApiServer();
+  await startApiServer();
   startLoop();
 }
 

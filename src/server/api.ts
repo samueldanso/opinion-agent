@@ -1,21 +1,36 @@
 import express from "express";
+import { privateKeyToAccount } from "viem/accounts";
+import { getCurrentSignalPrice, say } from "../agent";
+import { getMonologueHistory } from "../agent/monologue";
 import { config, getAgentAddress } from "../config";
 import {
-	getDb,
+	getAccuracy,
 	getAllSignals,
 	getAllTrades,
-	getAccuracy,
+	getDb,
 	getTotalEarned,
 	getTotalTradePnl,
 } from "../db";
-import { addClient, getClientCount } from "../events";
 import { getEconomicState } from "../economics";
-import { getCurrentSignalPrice } from "../agent";
-import { say } from "../agent";
-import { getMonologueHistory } from "../agent/monologue";
+import { addClient, getClientCount } from "../events";
 
-export function startApiServer(): void {
+const ORIGIN = "https://sigint-agent-production.up.railway.app";
+const SIGNAL_ENDPOINT = `${ORIGIN}/signal/eth`;
+
+async function buildOwnershipProof(): Promise<string | null> {
+	const key = process.env.AGENT_PRIVATE_KEY ?? process.env.PINION_PRIVATE_KEY;
+	if (!key) return null;
+	try {
+		const account = privateKeyToAccount(key as `0x${string}`);
+		return await account.signMessage({ message: ORIGIN });
+	} catch {
+		return null;
+	}
+}
+
+export async function startApiServer(): Promise<void> {
 	const app = express();
+	const ownershipProof = await buildOwnershipProof();
 
 	app.use((_req, res, next) => {
 		res.setHeader("Access-Control-Allow-Origin", "*");
@@ -62,16 +77,23 @@ export function startApiServer(): void {
 	});
 
 	app.get("/.well-known/x402", (_req, res) => {
-		res.json({
-			resources: [
-				{
-					url: "https://sigint-agent-production.up.railway.app/signal/eth",
-					description:
-						"ETH price direction signal. SIGINT reasons over live onchain data (price, funding rate, liquidations, DEX/CEX volume) and executes a real USDC→ETH trade before responding. Every signal includes a tradeHash — verifiable proof the agent had skin in the game before you paid.",
-					mimeType: "application/json",
-				},
-			],
-		});
+		const doc: {
+			version: number;
+			resources: string[];
+			ownershipProofs?: string[];
+			instructions: string;
+		} = {
+			version: 1,
+			resources: [SIGNAL_ENDPOINT],
+			instructions:
+				"# SIGINT — On-chain Signals Intelligence\n\nSIGINT is a sovereign AI that generates ETH price direction signals, backs each call with a real on-chain trade, and sells them via x402 micropayments.\n\n## Signal endpoint\n\n`GET /signal/eth` — $0.10 USDC on Base\n\nEvery response includes a `tradeHash` — verifiable proof the agent had skin in the game before you paid.\n\n## Agent wallet\n\n`0x9fe05351902e13c341e54f681e9541790efbe9b9` — all activity on-chain and verifiable on BaseScan.\n\n## Dashboard\n\nhttps://sigint-agent.vercel.app",
+		};
+
+		if (ownershipProof) {
+			doc.ownershipProofs = [ownershipProof];
+		}
+
+		res.json(doc);
 	});
 
 	// Proxy x402 skill server so both ports are reachable from one Railway domain
