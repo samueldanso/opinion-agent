@@ -58,9 +58,9 @@ const BOOT_LINES = [
   "Loading dashboard...",
 ];
 
-const LINE_DELAY = 400;
-const CHAR_DELAY = 20;
-const COMPLETE_DELAY = 600;
+const LINE_DELAY = 600;
+const CHAR_DELAY = 35;
+const COMPLETE_DELAY = 800;
 
 export function BootTerminal({ onComplete }: BootTerminalProps) {
   const [lines, setLines] = useState<string[]>([]);
@@ -144,7 +144,7 @@ export function BootTerminal({ onComplete }: BootTerminalProps) {
         SKIP →
       </button>
 
-      <div className="flex-1 font-mono text-sm leading-relaxed text-[#DA1C1C]">
+      <div className="flex-1 font-mono text-base leading-loose text-[#DA1C1C]">
         <AnimatePresence>
           {lines.map((line, i) => (
             <motion.p
