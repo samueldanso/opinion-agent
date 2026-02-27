@@ -11,6 +11,34 @@ import { Feed } from "./feed";
 import { TrackRecordChart } from "./track-record-chart";
 import { ParticleBg } from "./particle-bg";
 
+function SigintMark() {
+  return (
+    <svg viewBox="0 0 32 32" className="size-6" fill="none" role="img">
+      <title>SIGINT</title>
+      <circle cx="16" cy="16" r="3" fill="#DA1C1C" />
+      {[0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map((deg) => {
+        const angle = (deg * Math.PI) / 180;
+        const x1 = 16 + Math.cos(angle) * 6;
+        const y1 = 16 + Math.sin(angle) * 6;
+        const x2 = 16 + Math.cos(angle) * 13;
+        const y2 = 16 + Math.sin(angle) * 13;
+        const cx1 = 16 + Math.cos(angle + 0.3) * 9.5;
+        const cy1 = 16 + Math.sin(angle + 0.3) * 9.5;
+        return (
+          <path
+            key={deg}
+            d={`M ${x1} ${y1} Q ${cx1} ${cy1} ${x2} ${y2}`}
+            stroke="#DA1C1C"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity={0.85}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
 export function Dashboard() {
   const state = useAgentStream();
 
@@ -19,7 +47,7 @@ export function Dashboard() {
       <ParticleBg />
       <header className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
         <div className="flex items-center gap-3">
-          <div className="size-2 rounded-full bg-[#DA1C1C] animate-pulse" />
+          <SigintMark />
           <h1 className="font-mono text-lg font-bold tracking-[0.15em] text-[#DA1C1C]">
             SIGINT
           </h1>
