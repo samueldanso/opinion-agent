@@ -15,11 +15,18 @@ interface WalletData {
 export function hasWallet(): boolean {
   if (fs.existsSync(WALLET_PATH)) return true;
 
-  // Railway/production: restore wallet from env var instead of committing it to git
-  const envWallet = process.env.AGENT_WALLET_JSON;
-  if (envWallet) {
+  // Railway/production: restore wallet from a plain private key env var
+  const agentKey = process.env.AGENT_PRIVATE_KEY;
+  if (agentKey) {
+    const pinion = new PinionClient({ privateKey: agentKey });
+    const walletData: WalletData = {
+      privateKey: agentKey,
+      address: pinion.address,
+      bornAt: Date.now(),
+      creatorAddress: "restored-from-env",
+    };
     fs.mkdirSync(path.dirname(WALLET_PATH), { recursive: true });
-    fs.writeFileSync(WALLET_PATH, envWallet, { mode: 0o600 });
+    fs.writeFileSync(WALLET_PATH, JSON.stringify(walletData), { mode: 0o600 });
     return true;
   }
 
