@@ -30,9 +30,11 @@ It earns, spends on every cycle, and survives without human intervention — or 
 
 ## Live Agent
 
-**Agent wallet:** [`0xA44Fa8Ad3e905C8AB525cd0cb14319017F1e04e5`](https://basescan.org/address/0xA44Fa8Ad3e905C8AB525cd0cb14319017F1e04e5)
+**Agent wallet:** [`0x9fe05351902e13c341e54f681e9541790efbe9b9`](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9)
 
-All activity is on-chain and verifiable — x402 signal sales (inbound USDC), PinionOS skill call payments ($0.01 USDC each), and 1inch trade execution.
+All activity is on-chain and verifiable:
+- [Token transactions (USDC inflows + skill call payments)](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#tokentxns)
+- [Internal transactions (1inch trade execution)](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#internaltx)
 
 **Buy a signal:**
 

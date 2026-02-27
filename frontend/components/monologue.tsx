@@ -34,7 +34,7 @@ export function Monologue({ lines }: MonologueProps) {
       <CardContent className="flex-1 min-h-0">
         <div
           ref={scrollRef}
-          className="min-h-64 max-h-[520px] overflow-y-auto rounded p-3 font-mono text-xs leading-relaxed"
+          className="min-h-64 max-h-[520px] overflow-y-auto overflow-x-auto rounded p-3 font-mono text-[13px] leading-relaxed"
           style={{ background: "var(--terminal-bg)", color: "var(--terminal-text)" }}
         >
           {lines.length === 0 ? (
@@ -92,7 +92,7 @@ function MonologueLine({ line, index, isNew }: { line: string; index: number; is
   }, [isNew]);
 
   return (
-    <p ref={ref} className="py-0.5" style={{ opacity: isNew ? 1 : 0.7 }}>
+    <p ref={ref} className="py-0.5 whitespace-nowrap" style={{ opacity: isNew ? 1 : 0.7 }}>
       <span className="opacity-30 mr-2 select-none text-neutral-600">
         {String(index + 1).padStart(3, "0")}
       </span>

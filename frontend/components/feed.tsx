@@ -28,7 +28,7 @@ export function Feed({ signals, trades }: FeedProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 min-h-0">
-        <div className="max-h-80 overflow-y-auto space-y-1.5">
+        <div className="max-h-[420px] overflow-y-auto space-y-1.5">
           {sorted.length === 0 ? (
             <p className="text-neutral-600 text-sm italic font-mono">
               No signals yet...
@@ -64,46 +64,48 @@ function SignalItem({ signal: s, trade }: { signal: SignalRow; trade?: TradeRow 
       : "text-[var(--color-down)]";
 
   return (
-    <div className="flex items-center gap-3 rounded border border-white/5 bg-white/[0.02] px-3 py-2">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className={`font-mono font-bold text-sm ${dirColor}`}>
-            {dir}
-          </span>
-          {mark && (
-            <span className={`font-mono text-sm ${statusColor}`}>{mark}</span>
-          )}
-          {delta && (
-            <span className={`font-mono text-xs ${statusColor}`}>{delta}</span>
-          )}
-          <Badge variant="outline" className="text-[10px] px-1.5 border-white/10">
-            {s.confidence}%
-          </Badge>
-          {isPending && (
-            <span className="text-[10px] text-[var(--color-pending)] font-mono">
-              pending
+    <div className="rounded border border-white/5 bg-white/[0.02] px-3 py-2.5 overflow-x-auto">
+      <div className="flex items-start gap-3 min-w-0">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className={`font-mono font-bold text-sm ${dirColor}`}>
+              {dir}
             </span>
-          )}
+            {mark && (
+              <span className={`font-mono text-sm ${statusColor}`}>{mark}</span>
+            )}
+            {delta && (
+              <span className={`font-mono text-xs ${statusColor}`}>{delta}</span>
+            )}
+            <Badge variant="outline" className="text-[10px] px-1.5 border-white/10">
+              {s.confidence}%
+            </Badge>
+            {isPending && (
+              <span className="text-[10px] text-[var(--color-pending)] font-mono">
+                pending
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-neutral-400 mt-1 font-mono whitespace-pre-wrap leading-relaxed">
+            {s.reasoning}
+          </p>
         </div>
-        <p className="text-[11px] text-neutral-500 truncate mt-0.5 font-mono">
-          {s.reasoning}
-        </p>
-      </div>
-      <div className="text-right shrink-0">
-        <p className="font-mono text-xs text-neutral-400">{formatUSD(s.currentPrice)}</p>
-        {trade?.txHash && (
-          <a
-            href={`https://basescan.org/tx/${trade.txHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] font-mono text-neutral-600 hover:text-[#DA1C1C] transition-colors"
-          >
-            {trade.txHash.slice(0, 8)}...
-          </a>
-        )}
-        <p className="text-[10px] text-neutral-600 font-mono">
-          {formatRelativeTime(s.formedAt)}
-        </p>
+        <div className="text-right shrink-0 ml-2">
+          <p className="font-mono text-xs text-neutral-400">{formatUSD(s.currentPrice)}</p>
+          {trade?.txHash && (
+            <a
+              href={`https://basescan.org/tx/${trade.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] font-mono text-[#DA1C1C] underline hover:text-[#ff3b3b] transition-colors"
+            >
+              {trade.txHash.slice(0, 10)}...
+            </a>
+          )}
+          <p className="text-[10px] text-neutral-600 font-mono">
+            {formatRelativeTime(s.formedAt)}
+          </p>
+        </div>
       </div>
     </div>
   );
