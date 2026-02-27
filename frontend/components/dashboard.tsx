@@ -8,12 +8,15 @@ import { Survival } from "./survival";
 import { Economics } from "./economics";
 import { Monologue } from "./monologue";
 import { Feed } from "./feed";
+import { TrackRecordChart } from "./track-record-chart";
+import { ParticleBg } from "./particle-bg";
 
 export function Dashboard() {
   const state = useAgentStream();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] p-4 md:p-8">
+    <div className="relative min-h-screen bg-[#0a0a0a] p-4 md:p-8">
+      <ParticleBg />
       <header className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
         <div className="flex items-center gap-3">
           <div className="size-2 rounded-full bg-[#FF6B35] animate-pulse" />
@@ -73,6 +76,7 @@ export function Dashboard() {
 
         <div className="flex flex-col gap-4">
           <Monologue lines={state.monologue} />
+          <TrackRecordChart signals={state.signals} />
           <Feed signals={state.signals} trades={state.trades} />
         </div>
       </div>

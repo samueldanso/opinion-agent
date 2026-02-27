@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { playClick } from "@/lib/sounds";
 
 interface EntryGateProps {
   onEnter: () => void;
@@ -55,7 +56,7 @@ export function EntryGate({ onEnter }: EntryGateProps) {
         </div>
 
         <motion.button
-          onClick={onEnter}
+          onClick={() => { playClick(); onEnter(); }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="rounded-full bg-[#FF6B35] px-10 py-3 font-mono text-sm font-semibold tracking-wider text-black transition-colors hover:bg-[#FF8555]"

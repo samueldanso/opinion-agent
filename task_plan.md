@@ -18,14 +18,14 @@ Implement all v3 features from `docs/sigint-v3-spec.md` in 3 phases — backend 
 - [x] 2.5: SSE history replay integration — works out of box with backend replay
 
 ## Phase 3: Frontend Polish
-- [ ] 3.1: GSAP typewriter for monologue feed
-- [ ] 3.2: Three.js particle/grid background
-- [ ] 3.3: Recharts — price chart + track record visualizations
-- [ ] 3.4: Sound design — keyboard sounds, click feedback, ambient hum
+- [x] 3.1: GSAP typewriter for monologue feed
+- [x] 3.2: Three.js particle/grid background
+- [x] 3.3: Recharts — track record bar chart with delta
+- [x] 3.4: Sound design — keyboard sounds, click feedback via Web Audio API
 
 ## Current
-**Working on**: Phase 3.1
-**Status**: Phase 1 + 2 complete, starting Phase 3
+**Working on**: Complete
+**Status**: All 3 phases implemented. Backend + frontend typecheck clean. Frontend build passes.
 
 ## Decisions
 - Commit after each phase passes typecheck + diagnostics

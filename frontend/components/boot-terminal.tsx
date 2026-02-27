@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { playKeystroke } from "@/lib/sounds";
 
 interface BootTerminalProps {
   onComplete: () => void;
@@ -73,6 +74,7 @@ export function BootTerminal({ onComplete }: BootTerminalProps) {
     const line = resolvedLines[lineIndex];
     if (charIndex < line.length) {
       const timeout = setTimeout(() => {
+        playKeystroke();
         setCurrentLine((prev) => prev + line[charIndex]);
         setCharIndex((prev) => prev + 1);
       }, CHAR_DELAY);
