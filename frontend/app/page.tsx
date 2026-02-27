@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { EntryGate } from "@/components/entry-gate";
@@ -15,13 +15,35 @@ const Dashboard = dynamic(
   { ssr: false },
 );
 
-type Screen = "gate" | "boot" | "dashboard";
+const STORAGE_KEY = "sigint-booted";
+
+type Screen = "loading" | "gate" | "boot" | "dashboard";
 
 export default function Page() {
-  const [screen, setScreen] = useState<Screen>("gate");
+  const [screen, setScreen] = useState<Screen>("loading");
 
-  const handleEnter = useCallback(() => setScreen("boot"), []);
-  const handleBootComplete = useCallback(() => setScreen("dashboard"), []);
+  useEffect(() => {
+    const booted = localStorage.getItem(STORAGE_KEY);
+    setScreen(booted ? "dashboard" : "gate");
+  }, []);
+
+  const handleEnter = useCallback(() => {
+    const booted = localStorage.getItem(STORAGE_KEY);
+    setScreen(booted ? "dashboard" : "boot");
+  }, []);
+
+  const handleBootComplete = useCallback(() => {
+    localStorage.setItem(STORAGE_KEY, "1");
+    setScreen("dashboard");
+  }, []);
+
+  const handleLogoClick = useCallback(() => {
+    setScreen("gate");
+  }, []);
+
+  if (screen === "loading") {
+    return <div className="fixed inset-0 bg-[#060606]" />;
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -54,7 +76,7 @@ export default function Page() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Dashboard />
+          <Dashboard onLogoClick={handleLogoClick} />
         </motion.div>
       )}
     </AnimatePresence>

@@ -48,19 +48,27 @@ function SigintMark() {
   );
 }
 
-export function Dashboard() {
+interface DashboardProps {
+  onLogoClick?: () => void;
+}
+
+export function Dashboard({ onLogoClick }: DashboardProps) {
   const state = useAgentStream();
 
   return (
     <div className="relative min-h-screen bg-[#0a0a0a] p-4 md:p-8">
       <ParticleBg />
       <header className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
-        <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onLogoClick}
+          className="flex items-center gap-3 transition-opacity hover:opacity-80"
+        >
           <SigintMark />
           <h1 className="font-mono text-lg font-bold tracking-[0.15em] text-[#DA1C1C]">
             SIGINT
           </h1>
-        </div>
+        </button>
         <div className="flex items-center gap-4">
           {state.price !== null && (
             <span className="font-mono text-sm text-neutral-400">
