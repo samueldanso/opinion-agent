@@ -19,8 +19,8 @@ export function Dashboard() {
       <ParticleBg />
       <header className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
         <div className="flex items-center gap-3">
-          <div className="size-2 rounded-full bg-[#FF6B35] animate-pulse" />
-          <h1 className="font-mono text-lg font-bold tracking-[0.15em] text-[#FF6B35]">
+          <div className="size-2 rounded-full bg-[#DA1C1C] animate-pulse" />
+          <h1 className="font-mono text-lg font-bold tracking-[0.15em] text-[#DA1C1C]">
             SIGINT
           </h1>
           <span className="font-mono text-[10px] text-neutral-600">v3</span>
@@ -46,38 +46,52 @@ export function Dashboard() {
 
       <div className="grid gap-4 lg:grid-cols-[1fr_1.8fr]">
         <div className="flex flex-col gap-4">
-          <Wallet
-            usdc={state.usdc}
-            tier={state.tier}
-            price={state.price}
-            signalPrice={state.signalPrice}
-            connected={state.connected}
-          />
-          <BuySignal
-            signalPrice={state.signalPrice}
-            onSignalReceived={state.refetch}
-          />
-          <Survival
-            ratio={state.ratio}
-            runway={state.runway}
-            tier={state.tier}
-            accuracy={state.accuracy}
-            totalSignals={state.totalSignals}
-            correctCount={state.correctCount}
-            unlimitedProgress={state.unlimitedProgress}
-            unlimitedKey={state.unlimitedKey}
-          />
-          <Economics
-            earned={state.earned}
-            spent={state.spent}
-            tradePnl={state.tradePnl}
-          />
+          <div className="card-glow rounded-lg">
+            <Wallet
+              usdc={state.usdc}
+              tier={state.tier}
+              price={state.price}
+              signalPrice={state.signalPrice}
+              connected={state.connected}
+            />
+          </div>
+          <div className="card-glow rounded-lg">
+            <BuySignal
+              signalPrice={state.signalPrice}
+              onSignalReceived={state.refetch}
+            />
+          </div>
+          <div className="card-glow rounded-lg">
+            <Survival
+              ratio={state.ratio}
+              runway={state.runway}
+              tier={state.tier}
+              accuracy={state.accuracy}
+              totalSignals={state.totalSignals}
+              correctCount={state.correctCount}
+              unlimitedProgress={state.unlimitedProgress}
+              unlimitedKey={state.unlimitedKey}
+            />
+          </div>
+          <div className="card-glow rounded-lg">
+            <Economics
+              earned={state.earned}
+              spent={state.spent}
+              tradePnl={state.tradePnl}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-4">
-          <Monologue lines={state.monologue} />
-          <TrackRecordChart signals={state.signals} />
-          <Feed signals={state.signals} trades={state.trades} />
+          <div className="card-glow rounded-lg">
+            <Monologue lines={state.monologue} />
+          </div>
+          <div className="card-glow rounded-lg">
+            <TrackRecordChart signals={state.signals} />
+          </div>
+          <div className="card-glow rounded-lg">
+            <Feed signals={state.signals} trades={state.trades} />
+          </div>
         </div>
       </div>
     </div>

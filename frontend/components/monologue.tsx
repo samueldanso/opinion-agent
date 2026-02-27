@@ -28,7 +28,7 @@ export function Monologue({ lines }: MonologueProps) {
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 font-mono text-sm tracking-wider text-neutral-400">
           <span>AGENT MONOLOGUE</span>
-          <span className="animate-blink text-[#FF6B35]">_</span>
+          <span className="animate-blink text-[#DA1C1C]">_</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 min-h-0">

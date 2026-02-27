@@ -34,7 +34,7 @@ function Particles() {
         />
       </bufferGeometry>
       <pointsMaterial
-        color="#FF6B35"
+        color="#DA1C1C"
         size={0.03}
         transparent
         opacity={0.3}
@@ -55,7 +55,7 @@ function Grid() {
   return (
     <gridHelper
       ref={ref}
-      args={[40, 40, "#FF6B35", "#FF6B35"]}
+      args={[40, 40, "#DA1C1C", "#DA1C1C"]}
       position={[0, -5, 0]}
       rotation={[0, 0, 0]}
       material-opacity={0.04}

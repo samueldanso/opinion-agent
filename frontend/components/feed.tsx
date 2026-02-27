@@ -96,7 +96,7 @@ function SignalItem({ signal: s, trade }: { signal: SignalRow; trade?: TradeRow 
             href={`https://basescan.org/tx/${trade.txHash}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] font-mono text-neutral-600 hover:text-[#FF6B35] transition-colors"
+            className="text-[10px] font-mono text-neutral-600 hover:text-[#DA1C1C] transition-colors"
           >
             {trade.txHash.slice(0, 8)}...
           </a>

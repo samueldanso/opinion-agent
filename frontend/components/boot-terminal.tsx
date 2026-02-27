@@ -102,7 +102,7 @@ export function BootTerminal({ onComplete }: BootTerminalProps) {
         SKIP →
       </button>
 
-      <div className="flex-1 font-mono text-sm leading-relaxed text-[#FF6B35]">
+      <div className="flex-1 font-mono text-sm leading-relaxed text-[#DA1C1C]">
         <AnimatePresence>
           {lines.map((line, i) => (
             <motion.p
