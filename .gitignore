@@ -9,6 +9,10 @@ node_modules/
 # Bun
 bun.lockb
 
+# Package build output
+/packages/sigint-os/dist/
+/packages/sigint-os/node_modules/
+
 # Frontend build
 /frontend/.next/
 /frontend/node_modules/

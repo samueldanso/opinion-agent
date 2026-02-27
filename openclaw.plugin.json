@@ -1,34 +1,32 @@
 {
-  "name": "sigint",
-  "version": "1.0.0",
-  "description": "Sovereign AI agent that forms ETH directional signals backed by its own trades",
-  "author": "SIGINT",
-  "skills": [
-    {
-      "name": "signal-eth",
-      "description": "ETH price direction signal with onchain context and trade proof",
-      "endpoint": "/signal/eth",
-      "method": "GET",
-      "price": "$0.10",
-      "network": "base",
-      "response": {
-        "direction": "up | down",
-        "confidence": "0-100",
-        "currentPrice": "number",
-        "resolveAt": "unix timestamp",
-        "reasoning": "string",
-        "tradeHash": "0x...",
-        "onchainContext": {
-          "fundingRate": "number",
-          "liquidationBias": "string",
-          "dexCexVolumeRatio": "number"
-        },
-        "trackRecord": {
-          "correct": "number",
-          "total": "number",
-          "tradePnl": "number"
+    "name": "sigint",
+    "version": "1.0.0",
+    "description": "Sovereign AI agent that sells ETH direction signals backed by its own onchain trades. $0.05–$0.20 USDC via x402 on Base.",
+    "author": "SIGINT",
+    "license": "MIT",
+    "homepage": "https://sigint-agent.vercel.app",
+    "skills": [
+        {
+            "name": "signal-eth",
+            "description": "ETH price direction signal with onchain context (funding rate, liquidation bias, DEX/CEX volume) and proof-of-trade hash. Agent executes its own trade before responding.",
+            "endpoint": "/signal/eth",
+            "method": "GET",
+            "price": "$0.10",
+            "currency": "USDC",
+            "network": "base",
+            "inputSchema": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
         }
-      }
-    }
-  ]
+    ],
+    "x402": {
+        "facilitator": "https://facilitator.payai.network",
+        "network": "base",
+        "paymentToken": "USDC"
+    },
+    "skillDirs": [
+        "skills/signal-eth"
+    ]
 }

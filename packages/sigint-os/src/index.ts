@@ -42,7 +42,7 @@ export async function getEthSignal(options: SigintOptions): Promise<Signal> {
 	const pinion = new PinionClient({ privateKey: options.privateKey });
 	const endpoint = options.endpoint ?? SIGINT_ENDPOINT;
 	const response = await payX402Service(pinion.signer, endpoint);
-	return response as Signal;
+	return response as unknown as Signal;
 }
 
 /**
@@ -63,6 +63,6 @@ export class SigintClient {
 
 	async getSignal(): Promise<Signal> {
 		const response = await payX402Service(this.pinion.signer, this.endpoint);
-		return response as Signal;
+		return response as unknown as Signal;
 	}
 }
