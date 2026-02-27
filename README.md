@@ -47,33 +47,59 @@ It earns, spends on every cycle, and survives without human intervention — or 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────┐
-│  DASHBOARD  Next.js 15 · Vercel                      │
-│  Monologue · Survival · Economics · Signal Log        │
-│  ◄── SSE stream  ──  /status  ──  /signals           │
-└─────────────────────┬────────────────────────────────┘
-                      │ HTTP / SSE
-┌─────────────────────▼────────────────────────────────┐
-│  BACKEND  Bun / TypeScript · Railway                 │
-│                                                      │
-│  Port 3001 — Express                                 │
-│  ├─ GET /events           SSE stream                 │
-│  ├─ GET /status           snapshot                   │
-│  ├─ GET /signals          history                    │
-│  ├─ GET /.well-known/x402 discovery                  │
-│  └─ ALL /signal/*         proxy → port 4020          │
-│                                                      │
-│  Port 4020 — createSkillServer                       │
-│  └─ GET /signal/eth       x402 gate ($0.10 USDC)     │
-│                                                      │
-│  PinionOS SDK · Coinglass · DeFiLlama                │
-│  SQLite (bun:sqlite) — ./data/agent.db               │
-└─────────────────────┬────────────────────────────────┘
-                      │ x402 · USDC · 1inch swaps
-┌─────────────────────▼────────────────────────────────┐
-│  Base L2 Mainnet                                     │
-└──────────────────────────────────────────────────────┘
+  BUYER (agent / human)
+  └─ npm i sigint-os  ──►  getEthSignal({ privateKey })
+                                    │
+                           x402 payment ($0.10 USDC)
+                                    │
+                                    ▼
+┌───────────────────────────────────────────────────────────────┐
+│  SIGINT BACKEND  Bun · Railway                                │
+│                                                               │
+│  Port 4020 ── createSkillServer (pinion-os/server)            │  ← EARNS
+│  └─ GET /signal/eth   x402 gate · $0.10 USDC per call         │
+│                                                               │
+│  Port 3001 ── Express API                                     │
+│  ├─ GET /events        SSE stream → dashboard                 │
+│  ├─ GET /status        snapshot                               │
+│  ├─ GET /signals       history                                │
+│  └─ GET /.well-known/x402  discovery doc                      │
+│                                                               │
+│  AGENT LOOP (every 6h)                                        │
+│  ├─ skills.price("ETH")      $0.01  live price               │  ← SPENDS
+│  ├─ skills.balance(addr)     $0.01  wallet health            │
+│  ├─ resolvePendingSignals()         check outcomes            │
+│  └─ tier check → adjust signal price                          │
+│                                                               │
+│  ON SIGNAL PURCHASE (cached 1h, one trade per window)         │
+│  ├─ skills.price("ETH")      $0.01  fresh price              │
+│  ├─ skills.chat(prompt)      $0.01  LLM → direction JSON     │
+│  ├─ skills.trade(USDC,ETH)   $0.01  1inch swap quote         │
+│  ├─ skills.broadcast(tx)     $0.01  execute on Base          │
+│  └─ skills.tx(hash)          $0.01  verify landed            │
+│                                                               │
+│  MILESTONES                                                   │
+│  ├─ skills.wallet()          $0.01  genesis identity         │
+│  ├─ skills.send() + broadcast $0.01 proof-of-survival tx     │
+│  └─ skills.unlimited()       $100   free calls at $100 earned │
+│                                                               │
+│  SQLite (bun:sqlite) — signals · trades · prices · spend      │
+└───────────────────────────────┬───────────────────────────────┘
+                                │ USDC payments · 1inch swaps · tx verify
+                                ▼
+                      Base L2 Mainnet
+                                │
+                                ▼
+┌───────────────────────────────────────────────────────────────┐
+│  DASHBOARD  Next.js 15 · Vercel                               │
+│  Monologue · Survival · Economics · Signal Feed               │
+│  ◄── SSE stream from /events (proxied via Next.js API route)  │
+└───────────────────────────────────────────────────────────────┘
 ```
+
+**PinionOS powers both sides of the economics:**
+- `createSkillServer` — the revenue side, x402 gate that collects USDC from buyers
+- `PinionClient` skills — the cost side, every onchain action the agent takes
 
 Two servers, one process. One Railway domain — the proxy routes `/signal/*` to port 4020 internally.
 
