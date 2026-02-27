@@ -50,7 +50,7 @@ interface BootTerminalProps {
 }
 
 const BOOT_LINES = [
-  "SIGINT v3 — On-chain Signals Intelligence",
+  "SIGINT — On-chain Signals Intelligence",
   "Connecting to Base mainnet...",
   "Sovereign agent: loading...",
   "Checking balance...",
@@ -82,7 +82,7 @@ export function BootTerminal({ onComplete }: BootTerminalProps) {
         const data = await res.json();
 
         const dynamicLines = [
-          "SIGINT v3 — On-chain Signals Intelligence",
+          "SIGINT — On-chain Signals Intelligence",
           "Connecting to Base mainnet...",
           `Sovereign agent: ${data.address ?? "0xA44F...04e5"}`,
           `Accuracy: ${data.accuracy?.toFixed(0) ?? 0}% (${data.correct ?? 0}/${data.total ?? 0})`,

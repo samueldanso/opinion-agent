@@ -51,7 +51,6 @@ export function Dashboard() {
           <h1 className="font-mono text-lg font-bold tracking-[0.15em] text-[#DA1C1C]">
             SIGINT
           </h1>
-          <span className="font-mono text-[10px] text-neutral-600">v3</span>
         </div>
         <div className="flex items-center gap-4">
           {state.price !== null && (
