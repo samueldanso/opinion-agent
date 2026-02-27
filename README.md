@@ -42,10 +42,12 @@ Buyers — agents or humans — pay $0.05–$0.20 USDC via x402. No account, no 
 
 ## Buy a Signal
 
-### Option 1 — npm package (simplest)
+### Option 1 — sigint-os npm package (simplest)
 
 ```bash
-npm install sigint-os pinion-os
+npm i sigint-os pinion-os
+# or
+bun add sigint-os pinion-os
 ```
 
 ```typescript
@@ -60,7 +62,9 @@ console.log(signal.confidence)  // 72
 console.log(signal.tradeHash)   // agent's own trade — verified on Basescan
 ```
 
-→ Full SDK docs: [`packages/sigint-os/`](packages/sigint-os/README.md)
+Requires a wallet with **USDC on Base** for the x402 payment ($0.05–$0.20 per signal).
+
+→ npm: [sigint-os](https://www.npmjs.com/package/sigint-os)
 
 ### Option 2 — PinionOS SDK directly
 
@@ -202,7 +206,7 @@ All 9 paid PinionOS skills used. Every call is justified — no gratuitous usage
 | API | File | What It Does |
 |---|---|---|
 | `createSkillServer` + `skill()` | [`src/server/skill.ts`](src/server/skill.ts) | x402 revenue endpoint — earns USDC per signal |
-| `payX402Service` | [`packages/sigint-os/`](packages/sigint-os/src/index.ts) | Buyer integration pattern — any agent calls with one line |
+| `payX402Service` | [`sigint-os`](https://www.npmjs.com/package/sigint-os) | Buyer integration pattern — any agent calls with one line |
 
 → Full cost breakdown and lifecycle: [`docs/00-overview.md`](docs/00-overview.md)
 
@@ -285,7 +289,7 @@ sigint-agent/
 │   ├── hooks/use-agent-stream.ts SSE state management
 │   └── lib/types.ts              TypeScript types
 ├── packages/
-│   └── sigint-os/                npm client SDK — any agent can install and call
+│   └── sigint-os/                npm client SDK — published as sigint-os on npm
 ├── data/                         SQLite DB + wallet.json (Railway volume, gitignored)
 ├── docs/
 │   ├── 00-overview.md            Problem, solution, agent lifecycle, PinionOS coverage
@@ -410,7 +414,7 @@ x402 discovery document. Used by [x402scan](https://x402scan.com) and any x402-c
 | Frontend | Next.js 15 + shadcn/ui + Tailwind CSS v4 |
 | Real-time | Server-Sent Events (SSE) |
 | Blockchain | Base L2 (wagmi + viem) |
-| Client SDK | `packages/sigint-os/` — npm-publishable integration package |
+| Client SDK | [`sigint-os`](https://www.npmjs.com/package/sigint-os) — install with `npm i sigint-os` |
 | Deploy | Railway (backend + SQLite volume) · Vercel (frontend) |
 
 ---
@@ -454,7 +458,7 @@ x402 discovery document. Used by [x402scan](https://x402scan.com) and any x402-c
 | [`docs/00-overview.md`](docs/00-overview.md) | Problem, solution, agent lifecycle, PinionOS SDK coverage, cost breakdown |
 | [`docs/01-architecture.md`](docs/01-architecture.md) | System design, data flow diagrams, DB schema, module reference |
 | [`docs/02-setup.md`](docs/02-setup.md) | Local dev, genesis flow, Railway + Vercel deployment, wallet management |
-| [`packages/sigint-os/`](packages/sigint-os/README.md) | npm client SDK — buy signals from any agent or app |
+| [`sigint-os` on npm](https://www.npmjs.com/package/sigint-os) | npm client SDK — buy signals from any agent or app |
 
 ---
 

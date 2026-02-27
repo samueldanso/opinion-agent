@@ -11,11 +11,73 @@ SIGINT reads live onchain data (funding rates, liquidations, DEX/CEX volume), fo
 **Price:** $0.05–$0.20 USDC per signal (x402 on Base, dynamic by agent tier)
 **Dashboard:** https://sigint-agent.vercel.app
 
-## Skills
+## Skill
 
-| # | Skill | Endpoint | Method | Description |
-|---|-------|----------|--------|-------------|
-| 1 | [signal-eth](skills/signal-eth/SKILL.md) | `/signal/eth` | GET | ETH direction signal with onchain context and proof-of-trade hash |
+| Skill | Endpoint | Method | Price | Description |
+|-------|----------|--------|-------|-------------|
+| signal-eth | `/signal/eth` | GET | $0.05–$0.20 | ETH direction signal with onchain context and proof-of-trade hash |
+
+## Endpoint
+
+```
+GET https://sigint-agent-production.up.railway.app/signal/eth
+```
+
+No parameters required.
+
+## Example Request
+
+```bash
+curl https://sigint-agent-production.up.railway.app/signal/eth
+```
+
+The first request returns HTTP 402 with payment requirements. Sign a USDC `TransferWithAuthorization` (EIP-3009) and retry with the `X-PAYMENT` header — or use `sigint-os` / `pinion-os` which handles this automatically.
+
+## Example Response
+
+```json
+{
+  "direction": "up",
+  "confidence": 74,
+  "currentPrice": 2847.50,
+  "resolveAt": 1740704400000,
+  "reasoning": "Funding rate negative at -0.03%, shorts crowded. Liquidation cluster above $2,900 suggests squeeze potential. DEX volume elevated vs CEX — retail accumulation pattern.",
+  "tradeHash": "0x4f2a8c3e1b7d9f6a2e5c8b1d4f7a0c3e6b9d2f5a8c1e4b7d0f3a6c9e2b5d8f1a",
+  "onchainContext": {
+    "fundingRate": -0.0312,
+    "liquidationBias": "short-heavy",
+    "dexCexVolumeRatio": 1.24
+  },
+  "trackRecord": {
+    "correct": 8,
+    "total": 13,
+    "tradePnl": 0.18
+  }
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `direction` | `"up" \| "down"` | ETH price direction prediction for the next hour |
+| `confidence` | `number` | Agent's conviction score, 0–100 |
+| `currentPrice` | `number` | ETH price in USD at signal formation |
+| `resolveAt` | `number` | UNIX timestamp (ms) when prediction resolves (T+1h) |
+| `reasoning` | `string` | Agent's onchain analysis in plain English |
+| `tradeHash` | `string \| null` | Agent's own USDC→ETH swap hash on Base (verify on Basescan) |
+| `onchainContext.fundingRate` | `number` | 8h perpetual funding rate (%) |
+| `onchainContext.liquidationBias` | `string` | `"long-heavy"`, `"short-heavy"`, or `"balanced"` |
+| `onchainContext.dexCexVolumeRatio` | `number` | DEX volume / CEX volume ratio |
+| `trackRecord.correct` | `number` | Count of correct resolved signals |
+| `trackRecord.total` | `number` | Count of all resolved signals |
+| `trackRecord.tradePnl` | `number` | Agent's cumulative trade PnL in USDC |
+
+## Signal Resolution
+
+- **Window:** 1 hour after signal formation
+- **Verdict:** Directional only — any price movement in the predicted direction = correct
+- **Trade PnL:** Mark-to-market at T+1h based on agent's executed trade
 
 ## How x402 Works
 
@@ -29,14 +91,12 @@ Every call = 1 real USDC transaction on Base.
 
 ## Install as OpenClaw Plugin
 
-Clone the repo and copy the plugin directory into your OpenClaw workspace:
-
 ```bash
 git clone https://github.com/samueldanso/sigint-agent.git
 cp -r sigint-agent/sigint-openclaw ~/.openclaw/workspace/skills/sigint
 ```
 
-OpenClaw loads skills from `workspace/skills/` on the next session. The `skills/signal-eth/SKILL.md` tells the agent what the skill does, how to call it, and what to expect back.
+OpenClaw loads skills from `workspace/skills/` on the next session.
 
 ## Use with sigint-os SDK
 
@@ -52,12 +112,12 @@ import { getEthSignal } from "sigint-os"
 const signal = await getEthSignal({ privateKey: process.env.WALLET_KEY })
 
 console.log(signal.direction)   // "up" | "down"
-console.log(signal.confidence)  // 72
-console.log(signal.reasoning)   // "Funding rate positive at 0.02%, longs crowded..."
-console.log(signal.tradeHash)   // "0xb910..." — agent's own trade on Base
+console.log(signal.confidence)  // 74
+console.log(signal.reasoning)   // "Funding rate negative..."
+console.log(signal.tradeHash)   // "0x4f2a..." — verify on Basescan
 ```
 
-The `sigint-os` SDK wraps the x402 payment automatically. Wallet must have USDC on Base.
+Wallet must have USDC on Base for the x402 payment.
 
 ## Use with PinionOS SDK directly
 
@@ -71,25 +131,14 @@ const signal = await payX402Service(
 )
 ```
 
-## Use with curl
+## Onchain Data Sources
 
-```bash
-# First request gets 402 with payment requirements
-curl https://sigint-agent-production.up.railway.app/signal/eth
-
-# Retry with signed USDC payment in X-PAYMENT header
-curl -H "X-PAYMENT: <signed-payment>" https://sigint-agent-production.up.railway.app/signal/eth
-```
-
-## Directory Structure
-
-```
-sigint-openclaw/
-  SKILL.md                    -- this file (index)
-  openclaw.plugin.json        -- OpenClaw plugin manifest
-  skills/
-    signal-eth/SKILL.md       -- ETH direction signal skill
-```
+| Input | Source |
+|-------|--------|
+| ETH price + 24h change | Birdeye via `skills.price("ETH")` |
+| Funding rates | Coinglass public API |
+| Liquidation levels | Coinglass public API |
+| DEX/CEX volume ratio | DeFiLlama public API |
 
 ## License
 
