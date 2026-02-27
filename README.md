@@ -28,17 +28,24 @@ It earns, spends on every cycle, and survives without human intervention — or 
 
 ---
 
+use table
+
 ## Live Agent
 
+| Agent | Address |
+| ----- | ------- |
+
+Agent wallet
 **Agent wallet:** [`0x9fe05351902e13c341e54f681e9541790efbe9b9`](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9)
 
 All activity is on-chain and verifiable:
+
 - [Token transactions (USDC inflows + skill call payments)](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#tokentxns)
 - [Internal transactions (1inch trade execution)](https://basescan.org/address/0x9fe05351902e13c341e54f681e9541790efbe9b9#internaltx)
 
 **Signal endpoint:** [`https://sigint-agent-production.up.railway.app/signal/eth`](https://sigint-agent-production.up.railway.app/signal/eth) — $0.10 USDC via x402
 
-**Listed on x402scan:** [`x402scan.com`](https://x402scan.com) — discoverable by any x402-compatible agent or client
+**Listed on x402scan:** [`x402scan.com/server/effc53a3-3235-48d5-a054-81c80b01bad2`](https://www.x402scan.com/server/effc53a3-3235-48d5-a054-81c80b01bad2) — discoverable by any x402-compatible agent or client
 
 **Buy a signal:**
 
@@ -155,6 +162,23 @@ API/SSE server on port 3001
 
 ## How It Works
 
+BOOT
+|
+FECTH
+|
+REASON
+|
+TRADE
+|
+SELL/PUBLISH
+|
+EARN
+
+|ADAPT
+NILESTONE
+|
+SURVIVE OR DIE
+
 ### Every hour, the agent:
 
 1. Fetches ETH price via PinionOS Birdeye skill
@@ -179,7 +203,7 @@ API/SSE server on port 3001
 
 ---
 
-## Architecture
+## Architecture (Use a diagram and flows simila to pinionOs diagram (frontend front to backend to integrations payment etc or refer to old @docs/prd.md)
 
 Two servers, one process:
 
@@ -269,8 +293,41 @@ No API key. No registration. USDC in, signal out.
 
 ---
 
+## ## Tech Stack
+
+| Layer | Technology | Details |
+| ----- | ---------- | ------- |
+
+## Project Structure
+
 ## Roadmap
 
-- **v3:** Sovereign wallet genesis via `skills.wallet()` — creator spawns agent, funds it, agent operates autonomously from there
-- **v3:** ERC-8004 agent identity registration — makes SIGINT discoverable by other agents in the on-chain agent registry
-- **v4:** SIGINT on X — autonomous signal announcements, resolution posts, survival milestones. Every call it backs, every win and loss, posted publicly. The track record becomes a feed.
+-
+-
+
+## Documentation
+
+All detailed docs are in the `/docs` directory:
+
+| Resource                                 | Description                                         |
+| :--------------------------------------- | :-------------------------------------------------- |
+| [Introduction](/docs/00-overview.md)     | Overview, features, problem, solution, how it works |
+| [Getting Started](/docs/02-setup.md)     | Setup guide, env configuration, and first run       |
+| [Architecture](/docs/01-architecture.md) | System design, layers, and data flow diagrams       |
+
+## Contributing
+
+1. Fork this repository
+2. Create your feature branch
+3. Commit your changes
+4. Open a Pull Request
+
+## License
+
+MIT
+
+## Acknowledgement
+
+PinionOS [www.]
+X402 [www]
+Base [www]
