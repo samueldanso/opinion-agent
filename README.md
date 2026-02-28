@@ -15,6 +15,8 @@
 ![npm](https://img.shields.io/badge/npm-sigint--os-CB3837?style=flat-square&logo=npm)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
+**[▶ Watch Demo](https://youtu.be/d7_LhJr6qXk)**
+
 </div>
 
 ---
@@ -98,6 +100,7 @@ It earns, spends on every cycle, and survives without human intervention — or 
 ```
 
 **PinionOS powers both sides of the economics:**
+
 - `createSkillServer` — the revenue side, x402 gate that collects USDC from buyers
 - `PinionClient` skills — the cost side, every onchain action the agent takes
 
@@ -255,18 +258,18 @@ At **$100 lifetime earnings** → `skills.unlimited()` auto-triggered → all fu
 
 All 9 paid PinionOS skills used. Every call is justified — no gratuitous usage:
 
-| Skill                       | Cost  | File                                           | What It Does                                       |
-| --------------------------- | ----- | ---------------------------------------------- | -------------------------------------------------- |
-| `skills.wallet()`           | $0.01 | [`src/agent/genesis.ts`](src/agent/genesis.ts) | Generate sovereign identity at first boot          |
-| `skills.fund()`             | $0.01 | [`src/agent/genesis.ts`](src/agent/genesis.ts) | Boot balance check + funding instructions          |
-| `skills.price("ETH")`       | $0.01 | [`src/data/price.ts`](src/data/price.ts)       | Price at 6h poll, signal formation, resolution |
-| `skills.balance(addr)`      | $0.01 | [`src/agent/loop.ts`](src/agent/loop.ts)       | Wallet health check after each signal              |
-| `skills.chat(prompt)`       | $0.01 | [`src/signal/index.ts`](src/signal/index.ts)   | Onchain context → directional signal JSON          |
-| `skills.trade(src,dst,amt)` | $0.01 | [`src/market/trade.ts`](src/market/trade.ts)   | Construct $0.05 USDC → ETH swap via 1inch          |
-| `skills.broadcast(tx)`      | $0.01 | [`src/market/trade.ts`](src/market/trade.ts)   | Execute trade + milestone proof tx on Base         |
-| `skills.tx(hash)`           | $0.01 | [`src/market/trade.ts`](src/market/trade.ts)   | Verify trade landed (not hallucinated)             |
-| `skills.send(to,amt,token)` | $0.01 | [`src/agent/loop.ts`](src/agent/loop.ts)       | Construct proof-of-survival tx when ratio ≥ 1.0    |
-| `skills.unlimited()`        | $100  | [`src/agent/loop.ts`](src/agent/loop.ts)       | Auto-purchase unlimited key at $100 earned         |
+| Skill                       | Cost  | File                                           | What It Does                                    |
+| --------------------------- | ----- | ---------------------------------------------- | ----------------------------------------------- |
+| `skills.wallet()`           | $0.01 | [`src/agent/genesis.ts`](src/agent/genesis.ts) | Generate sovereign identity at first boot       |
+| `skills.fund()`             | $0.01 | [`src/agent/genesis.ts`](src/agent/genesis.ts) | Boot balance check + funding instructions       |
+| `skills.price("ETH")`       | $0.01 | [`src/data/price.ts`](src/data/price.ts)       | Price at 6h poll, signal formation, resolution  |
+| `skills.balance(addr)`      | $0.01 | [`src/agent/loop.ts`](src/agent/loop.ts)       | Wallet health check after each signal           |
+| `skills.chat(prompt)`       | $0.01 | [`src/signal/index.ts`](src/signal/index.ts)   | Onchain context → directional signal JSON       |
+| `skills.trade(src,dst,amt)` | $0.01 | [`src/market/trade.ts`](src/market/trade.ts)   | Construct $0.05 USDC → ETH swap via 1inch       |
+| `skills.broadcast(tx)`      | $0.01 | [`src/market/trade.ts`](src/market/trade.ts)   | Execute trade + milestone proof tx on Base      |
+| `skills.tx(hash)`           | $0.01 | [`src/market/trade.ts`](src/market/trade.ts)   | Verify trade landed (not hallucinated)          |
+| `skills.send(to,amt,token)` | $0.01 | [`src/agent/loop.ts`](src/agent/loop.ts)       | Construct proof-of-survival tx when ratio ≥ 1.0 |
+| `skills.unlimited()`        | $100  | [`src/agent/loop.ts`](src/agent/loop.ts)       | Auto-purchase unlimited key at $100 earned      |
 
 **Server-side:**
 
